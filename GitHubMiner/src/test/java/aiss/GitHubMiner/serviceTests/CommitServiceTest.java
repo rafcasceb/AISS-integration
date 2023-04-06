@@ -7,7 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class CommitServiceTest {
@@ -17,14 +22,32 @@ public class CommitServiceTest {
     @Test
     @DisplayName( "Get commits with pagination test")
     void getCommitsPagination() {
+
+        Integer sinceCommits = 60;
+        Integer maxPages = 6;
+        Integer contentLimit = maxPages * 30; // A page has 30 elements by default in gitHub
+        String owner = "spring-projects";
+        String repo = "spring-framework";
+
         List<Commit> commits = service
-                .getCommitsPagination("spring-projects", "spring-framework",
+                .getCommitsPagination(owner, repo,
                         "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",
-                        5,5);
+                        sinceCommits,maxPages);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        LocalDateTime limit = LocalDateTime.now().minusDays(sinceCommits);
 
         for(Commit c : commits){
-            System.out.println(c.getCommit().getAuthor().getDate());
+            LocalDateTime commitDate = LocalDateTime
+                    .parse(c.getCommit().getCommitter().getDate(), formatter);
+
+            assertEquals(commitDate.isAfter(limit), true, "Commit date before limit");
+
+            assertEquals(c.getCommit().getUrl().contains(owner)
+                    && c.getCommit().getUrl().contains(repo),
+                    true, "This commit doesn't belong to the requested repository");
         }
+        assertEquals(commits.size()<=contentLimit, true, "Page limit exceeded");
 
     }
 }
