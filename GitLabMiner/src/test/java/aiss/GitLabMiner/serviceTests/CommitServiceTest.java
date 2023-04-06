@@ -7,7 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class CommitServiceTest {
@@ -26,13 +30,29 @@ public class CommitServiceTest {
     @Test
     @DisplayName( "Get commits with pagination test")
     void getCommitsPagination() {
+
+        String id = "4207231";
+        Integer since = 20;
+        Integer maxPages = 10;
+        Integer contentLimit = maxPages*30;
+
         List<Commit> commits = service
-                .getCommitsPagination("4207231","glpat-EWrMxiW1vhazpsMAsc4A",
-                        5, 5);
+                .getCommitsPagination(id,"glpat-EWrMxiW1vhazpsMAsc4A",
+                        since, maxPages);
+
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        LocalDateTime limit = LocalDateTime.now().minusDays(since);
 
         for(Commit c : commits){
-            System.out.println(c.getCommittedDate());
+            LocalDateTime commitDate = LocalDateTime
+                    .parse(c.getCommittedDate(), formatter);
+
+            //System.out.println(c.getCommittedDate());
+            assertEquals(commitDate.isAfter(limit), true, "Commit date before limit");
+
         }
+        assertEquals(commits.size()<=contentLimit, true, "Page limit exceeded");
     }
 
 }

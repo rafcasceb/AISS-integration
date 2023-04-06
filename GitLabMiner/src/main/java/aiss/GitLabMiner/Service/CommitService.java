@@ -1,5 +1,7 @@
 package aiss.GitLabMiner.Service;
 
+import aiss.GitLabMiner.Auxiliary.Auth;
+import aiss.GitLabMiner.Auxiliary.Pagination;
 import aiss.GitLabMiner.Models.Commits.Commit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,6 +35,15 @@ public class CommitService {
 
     }
 
+    private ResponseEntity<Commit[]> getRequest (String uri, HttpEntity<?> header){
+        ResponseEntity<Commit[]> response = restTemplate
+                .exchange(uri,
+                        HttpMethod.GET,
+                        header,
+                        Commit[].class);
+        return response;
+    }
+
     public List<Commit> getCommitsPagination (String id, String token, Integer sinceCommits, Integer maxPages){
 
         List<Commit> commits = new ArrayList<>();
@@ -46,49 +58,17 @@ public class CommitService {
             sinceCommits = 2;
         }
 
-        Date currentDate = new Date();
-        Date limitDate = new Date(currentDate.getTime() - sinceCommits * 24 * 60 * 60 * 1000);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
+        LocalDateTime since = LocalDateTime.now().minusDays(sinceCommits);
+        HttpEntity<?> header = Auth.buildHeader(token);
 
         while (hasMorePages && page <= maxPages){
 
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                    .fromUriString(baseUri + id + "/repository/commits")
-                    .queryParam("page", page);
+            String uri = baseUri + id + "/repository/commits?since=" + since + "&page=" + page;
+            ResponseEntity<Commit[]> response = getRequest(uri,header);
 
-            HttpEntity<?> entity = new HttpEntity<>(headers);
-
-            ResponseEntity<Commit[]> response = restTemplate
-                    .exchange(uriBuilder.toUriString(),
-                            HttpMethod.GET,
-                            entity,
-                            Commit[].class);
-
-            List<Commit> pageCommits = Arrays
-                    .asList(response.getBody());
-
-            for (Commit commit : pageCommits) {
-                Date commitDate = null;
-                try {
-                    commitDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(commit.getCommittedDate());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                if (commitDate != null && commitDate.after(limitDate)) {
-                    commits.add(commit);
-                }
-            }
-
-            String linkHeader = response
-                    .getHeaders().getFirst("Link");
-
-            if(linkHeader == null || !linkHeader.contains("rel=\"next\"")){
-                hasMorePages = false;
-            }else{
-                page ++;
-            }
+            commits.addAll(Arrays.asList(response.getBody()));
+            hasMorePages = Pagination.hasMorePages(response);
+            page ++;
         }
         return commits;
     }
