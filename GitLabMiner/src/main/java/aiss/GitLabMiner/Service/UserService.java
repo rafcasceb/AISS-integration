@@ -1,5 +1,6 @@
 package aiss.GitLabMiner.Service;
 
+import aiss.GitLabMiner.Auxiliary.Auth;
 import aiss.GitLabMiner.Models.Users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -20,19 +21,20 @@ public class UserService {
     String baseUri = "https://gitlab.com/api/v4/users?username=";
 
     public User getUser(String userName, String token){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-
-        HttpEntity<User[]> request = new HttpEntity<User[]>(headers);
+        HttpEntity<?> request = Auth.buildHeader(token);    // The actual type is HttpEntity<User[]>. Must be [] to work
         ResponseEntity<User[]> response = restTemplate.exchange(
                 baseUri + userName,
                 HttpMethod.GET,
                 request,
                 User[].class
         );
-
         return Arrays.stream(response.getBody()).toList().get(0);
     }
 
+    public User postUser(String userName, String token){
+        User user = getUser(userName, token);
+        // TODO Post this user to GitMiner
+        return user;
+    }
 
 }
