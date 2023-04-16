@@ -1,5 +1,8 @@
 package aiss.GitLabMiner.Service;
 
+import aiss.GitLabMiner.Auxiliary.Auth;
+import aiss.GitLabMiner.Auxiliary.Pagination;
+import aiss.GitLabMiner.Models.Commits.Commit;
 import aiss.GitLabMiner.Models.Issues.Issue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -12,6 +15,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +36,14 @@ public class IssueService {
         return Arrays.stream(issuesArray).toList();
 
     }
+    private ResponseEntity<Issue[]> getRequest (String uri, HttpEntity<?> header){
+        ResponseEntity<Issue[]> response = restTemplate
+                .exchange(uri,
+                        HttpMethod.GET,
+                        header,
+                        Issue[].class);
+        return response;
+    }
 
     public List<Issue> getIssuesPagination (String id, String token, Integer sinceIssues, Integer maxPages){
 
@@ -46,49 +59,17 @@ public class IssueService {
             sinceIssues = 20;
         }
 
-        Date currentDate = new Date();
-        Date limitDate = new Date(currentDate.getTime() - sinceIssues * 24 * 60 * 60 * 1000);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
+        LocalDateTime since = LocalDateTime.now().minusDays(sinceIssues);
+        HttpEntity<?> header = Auth.buildHeader(token);
 
         while (hasMorePages && page <= maxPages){
 
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                    .fromUriString(baseUri + id + "/issues")
-                    .queryParam("page", page);
+            String uri = baseUri + id + "/issues?updated_before=" + since + "&page=" + page;
+            ResponseEntity<Issue[]> response = getRequest(uri,header);
 
-            HttpEntity<?> entity = new HttpEntity<>(headers);
-
-            ResponseEntity<Issue[]> response = restTemplate
-                    .exchange(uriBuilder.toUriString(),
-                            HttpMethod.GET,
-                            entity,
-                            Issue[].class);
-
-            List<Issue> pageIssues = Arrays
-                    .asList(response.getBody());
-
-            for (Issue issue : pageIssues) {
-                Date issueDate = null;
-                try {
-                    issueDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(issue.getCreatedAt());
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                if (issueDate != null && issueDate.after(limitDate)) {
-                    issues.add(issue);
-                }
-            }
-
-            String linkHeader = response
-                    .getHeaders().getFirst("Link");
-
-            if(linkHeader == null || !linkHeader.contains("rel=\"next\"")){
-                hasMorePages = false;
-            }else{
-                page ++;
-            }
+            issues.addAll(Arrays.asList(response.getBody()));
+            hasMorePages = Pagination.hasMorePages(response);
+            page ++;
         }
         return issues;
     }
