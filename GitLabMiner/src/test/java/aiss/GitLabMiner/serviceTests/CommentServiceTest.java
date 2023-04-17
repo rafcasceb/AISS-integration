@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 public class CommentServiceTest {
 
@@ -18,8 +20,16 @@ public class CommentServiceTest {
     @Test
     @DisplayName( "Get comments test")
     void getComments() {
-        List<Comment> comments = service.getComments("4207231","4f87c2d8e5054b0d9ca4c9c1680a8a90307071c8");
+        List<Comment> comments = service.getComments("17960074","505", "glpat-EubL6mXBLo7cMyP4nDkm");
         System.out.println(comments);
+    }
+
+    @Test
+    @DisplayName( "Get comment with id test")
+    void getCommentId() {
+        Comment c = service.getCommentId("17960074",
+                "505", "glpat-EubL6mXBLo7cMyP4nDkm", "1345067735");
+        System.out.println(c);
     }
 
 }
