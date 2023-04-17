@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 class CommentServiceTest {
     @Autowired
@@ -28,7 +30,8 @@ class CommentServiceTest {
     @DisplayName("Get one comment with id")
 
     void getOneComment() {
-        Comment c = service.getCommentsId("spring-projects", "spring-framework", "2504073");
+        Comment c = service.getCommentsId("spring-projects", "spring-framework", "453284026");
+        assertEquals(c.getId().toString(), "453284026", "The id is not correct");
         System.out.println(c.getBody());
     }
 
