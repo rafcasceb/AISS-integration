@@ -1,8 +1,11 @@
 package aiss.GitLabMiner.Service;
 
+import aiss.GitLabMiner.Auxiliary.Auth;
 import aiss.GitLabMiner.Models.Comments.Comment;
-import aiss.GitLabMiner.Models.Commits.Commit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,11 +19,24 @@ public class CommentService {
     RestTemplate restTemplate;
 
     String baseUri = "https://gitlab.com/api/v4/projects/";
-    public List<Comment> getComments (String id, String commit){
+    public List<Comment> getComments (String id, String iid, String token){
 
-        Comment[] commentArray = restTemplate
-                .getForObject(baseUri + id + "/repository/commits/" + commit + "/comments", Comment[].class);
-        return Arrays.stream(commentArray).toList();
+        HttpEntity<?> request = Auth.buildHeader(token);
+        ResponseEntity<Comment[]> response = restTemplate.exchange(
+                baseUri +  id + "/issues/" + iid + "/notes",
+                HttpMethod.GET, request, Comment[].class);
+        return Arrays.stream(response.getBody()).toList();
 
     }
+
+    public Comment getCommentId (String id, String iid, String token, String commentId){
+
+        HttpEntity<?> request = Auth.buildHeader(token);
+        ResponseEntity<Comment[]> response = restTemplate.exchange(
+                baseUri +  id + "/issues/" + iid + "/notes/" + commentId,
+                HttpMethod.GET, request, Comment[].class);
+        return Arrays.stream(response.getBody()).toList().get(0);
+
+    }
+
 }
