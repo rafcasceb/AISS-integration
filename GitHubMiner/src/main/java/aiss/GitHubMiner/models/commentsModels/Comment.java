@@ -13,71 +13,42 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "html_url",
-    "url",
     "id",
     "node_id",
+    "url",
+    "html_url",
     "body",
-    "path",
-    "position",
-    "line",
-    "commit_id",
     "user",
     "created_at",
     "updated_at",
+    "issue_url",
     "author_association"
 })
 @Generated("jsonschema2pojo")
 public class Comment {
 
-    @JsonProperty("html_url")
-    private String htmlUrl;
-    @JsonProperty("url")
-    private String url;
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("node_id")
     private String nodeId;
+    @JsonProperty("url")
+    private String url;
+    @JsonProperty("html_url")
+    private String htmlUrl;
     @JsonProperty("body")
     private String body;
-    @JsonProperty("path")
-    private String path;
-    @JsonProperty("position")
-    private Integer position;
-    @JsonProperty("line")
-    private Integer line;
-    @JsonProperty("commit_id")
-    private String commitId;
     @JsonProperty("user")
     private User user;
     @JsonProperty("created_at")
     private String createdAt;
     @JsonProperty("updated_at")
     private String updatedAt;
+    @JsonProperty("issue_url")
+    private String issueUrl;
     @JsonProperty("author_association")
     private String authorAssociation;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
-
-    @JsonProperty("html_url")
-    public String getHtmlUrl() {
-        return htmlUrl;
-    }
-
-    @JsonProperty("html_url")
-    public void setHtmlUrl(String htmlUrl) {
-        this.htmlUrl = htmlUrl;
-    }
-
-    @JsonProperty("url")
-    public String getUrl() {
-        return url;
-    }
-
-    @JsonProperty("url")
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     @JsonProperty("id")
     public Integer getId() {
@@ -99,6 +70,26 @@ public class Comment {
         this.nodeId = nodeId;
     }
 
+    @JsonProperty("url")
+    public String getUrl() {
+        return url;
+    }
+
+    @JsonProperty("url")
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @JsonProperty("html_url")
+    public String getHtmlUrl() {
+        return htmlUrl;
+    }
+
+    @JsonProperty("html_url")
+    public void setHtmlUrl(String htmlUrl) {
+        this.htmlUrl = htmlUrl;
+    }
+
     @JsonProperty("body")
     public String getBody() {
         return body;
@@ -107,46 +98,6 @@ public class Comment {
     @JsonProperty("body")
     public void setBody(String body) {
         this.body = body;
-    }
-
-    @JsonProperty("path")
-    public String getPath() {
-        return path;
-    }
-
-    @JsonProperty("path")
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    @JsonProperty("position")
-    public Integer getPosition() {
-        return position;
-    }
-
-    @JsonProperty("position")
-    public void setPosition(Integer position) {
-        this.position = position;
-    }
-
-    @JsonProperty("line")
-    public Integer getLine() {
-        return line;
-    }
-
-    @JsonProperty("line")
-    public void setLine(Integer line) {
-        this.line = line;
-    }
-
-    @JsonProperty("commit_id")
-    public String getCommitId() {
-        return commitId;
-    }
-
-    @JsonProperty("commit_id")
-    public void setCommitId(String commitId) {
-        this.commitId = commitId;
     }
 
     @JsonProperty("user")
@@ -177,6 +128,16 @@ public class Comment {
     @JsonProperty("updated_at")
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @JsonProperty("issue_url")
+    public String getIssueUrl() {
+        return issueUrl;
+    }
+
+    @JsonProperty("issue_url")
+    public void setIssueUrl(String issueUrl) {
+        this.issueUrl = issueUrl;
     }
 
     @JsonProperty("author_association")
