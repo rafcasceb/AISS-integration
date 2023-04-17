@@ -18,14 +18,14 @@ public class CommentService {
     public List<Comment> getAllComments (String owner, String repo){
 
         Comment[] commentsArray = restTemplate
-                .getForObject(baseUri + owner + "/" + repo + "/comments", Comment[].class);
+                .getForObject(baseUri + owner + "/" + repo + "/issues/comments", Comment[].class);
         return Arrays.stream(commentsArray).toList();
 
     }
 
     public Comment getCommentsId (String owner, String repo, String id){
 
-        Comment c= restTemplate.getForObject(baseUri + owner + "/" + repo + "/comments/" + id, Comment.class);
+        Comment c= restTemplate.getForObject(baseUri + owner + "/" + repo + "/issues/comments/" + id, Comment.class);
         return c;
 
     }
