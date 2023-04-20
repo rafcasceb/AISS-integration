@@ -23,14 +23,5 @@ class UserServiceTest {
         User user = service.getUser("jack_smith", token);
         assertEquals(user.getName().trim(), "Jack Smith", "Name doesn't match.");
     }
-
-    /*
-    @Test
-    @DisplayName("TEST - Post user to GitMiner from GitLab")
-    void postUserTest(){
-        User user = service.postUser("jack_smith", token);
-        // If the post works, it will return the posted user
-        assertEquals(user.getName().trim(), "Jack Smith", "Name doesn't match.");
-    }
-    */
+    
 }
