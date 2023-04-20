@@ -31,10 +31,4 @@ public class UserService {
         return Arrays.stream(response.getBody()).toList().get(0);
     }
 
-    public User postUser(String userName, String token){
-        User user = getUser(userName, token);
-        // TODO Post this user to GitMiner
-        return user;
-    }
-
 }
