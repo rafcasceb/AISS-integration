@@ -13,7 +13,7 @@ class UserServiceTest {
 
     @Autowired
     UserService service;
-
+    
     @Test
     @DisplayName("Get user")
     void getUsers(){
@@ -21,13 +21,4 @@ class UserServiceTest {
         assertEquals(user.getName().trim(), "Rafael Castillo Cebolla", "Name doesn't match.");
     }
 
-    /*
-    @Test
-    @DisplayName("Post user to GitMiner from GitHub")
-    void postUserTest(){
-        User user = service.postUser("rafcasceb");
-        // If the post works, it will return the posted user
-        assertEquals(user.getName().trim(), "Rafael Castillo Cebolla", "Name doesn't match.");
-    }
-    */
 }
