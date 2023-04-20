@@ -20,10 +20,4 @@ public class UserService {
         return user;
     }
 
-    public User postUser(String userName){
-        User user = getUser(userName);
-        // TODO Post this user in GitMiner
-        return user;
-    }
-
 }
