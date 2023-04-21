@@ -1,7 +1,6 @@
 package aiss.GitHubMiner.serviceTests;
 
-import aiss.GitHubMiner.models.commitsModels.Commit;
-import aiss.GitHubMiner.models.projectsModels.Projects;
+import aiss.GitHubMiner.models.projectsModels.Project;
 import aiss.GitHubMiner.services.ProjectService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.hibernate.validator.internal.util.Contracts.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class ProjectServiceTest {
@@ -18,30 +17,25 @@ class ProjectServiceTest {
     @Autowired
     ProjectService service;
 
-    String token = "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";
-
     @Test
     @DisplayName("Get project")
     void getProject(){
-        Projects project = service.getProject("3525357", token);
-        assertTrue(project.getId() == 3525357, "The project doesn't exist");
-        System.out.println(project.getId());
+        Project project = service.getProject("microsoft","HealthVault-Mobile-iOS-Library");
+        assertEquals(project.getName(), "HealthVault-Mobile-iOS-Library", "The project doesn't exist.");
     }
 
     @Test
     @DisplayName("Get all projects")
     void getAllProjects() {
-        List<Projects> projects = service.getAllProjects("monicahq", "monica", token);
-        assertTrue(!projects.isEmpty(), "The list of projects is empty!");
-        System.out.println(projects);
-        }
+        List<Project> projects = service.getAllProjects("microsoft");
+        assertEquals(projects.get(0).getId() ,1932083, "The project doesn't exist.");
+    }
 
     @Test
-    @DisplayName("Get organization projects")
-    void getOrgProjects(){
-        List<Projects> listProjects = service.getOrgProjects("microsoft");
-        assertTrue(!listProjects.isEmpty(), "The list of projects for this organization is empty!");
-        System.out.println(listProjects);
+    @DisplayName("Get projects by pages")
+    void getProjectsPagination() {
+        List<Project> projects = service.getProjectsPagination("microsoft", 1);
+        assertEquals(projects.size(),20, "The pagination doesn't work.");
     }
 
 }
