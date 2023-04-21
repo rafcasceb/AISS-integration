@@ -22,17 +22,12 @@ public class IssueServiceTest {
 
     @Test
     @DisplayName( "Get issues test")
-
     void getIssues() {
-
         List<Issue> issues = service
-                .getIssues("spring-projects", "spring-framework"
-                        );
+                .getIssues("spring-projects", "spring-framework");
         for(Issue i : issues){
             System.out.println(i.getCreatedAt());
-
         }
-
     }
 
     @Test

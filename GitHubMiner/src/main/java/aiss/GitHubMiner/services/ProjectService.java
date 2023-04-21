@@ -26,16 +26,16 @@ public class ProjectService {
 
     public Projects getProject (String projectId, String token){
         HttpEntity<?> request = Auth.buildHeader(token);
-        ResponseEntity<Projects[]> response = restTemplate.exchange(
+        ResponseEntity<Projects> response = restTemplate.exchange(
                 baseUri + "projects/" + projectId,
-                HttpMethod.GET, request, Projects[].class);
-        return Arrays.stream(response.getBody()).toList().get(0);
+                HttpMethod.GET, request, Projects.class);
+        return response.getBody();
     }
 
     public List<Projects> getAllProjects (String owner, String repo, String token){
         HttpEntity<?> request = Auth.buildHeader(token);
         ResponseEntity<Projects[]> response = restTemplate.exchange(
-                baseUri + "repos/" + owner + "/" + repo + "/" + "projects",
+                baseUri + "repos/" + owner + "/" + repo + "/projects",
                 HttpMethod.GET, request, Projects[].class);
         return Arrays.stream(response.getBody()).toList();
     }
