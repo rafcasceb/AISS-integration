@@ -19,24 +19,21 @@ public class CommentService {
     RestTemplate restTemplate;
 
     String baseUri = "https://gitlab.com/api/v4/projects/";
-    public List<Comment> getComments (String id, String iid, String token){
 
+    public List<Comment> getComments (String projectId, String issue_iid, String token){
         HttpEntity<?> request = Auth.buildHeader(token);
         ResponseEntity<Comment[]> response = restTemplate.exchange(
-                baseUri +  id + "/issues/" + iid + "/notes",
+                baseUri +  projectId + "/issues/" + issue_iid + "/notes",
                 HttpMethod.GET, request, Comment[].class);
         return Arrays.stream(response.getBody()).toList();
-
     }
 
-    public Comment getCommentId (String id, String iid, String token, String commentId){
-
+    public Comment getCommentId (String projectId, String issue_iid, String token, String commentId){
         HttpEntity<?> request = Auth.buildHeader(token);
-        ResponseEntity<Comment[]> response = restTemplate.exchange(
-                baseUri +  id + "/issues/" + iid + "/notes/" + commentId,
-                HttpMethod.GET, request, Comment[].class);
-        return Arrays.stream(response.getBody()).toList().get(0);
-
+        ResponseEntity<Comment> response = restTemplate.exchange(
+                baseUri +  projectId + "/issues/" + issue_iid + "/notes/" + commentId,
+                HttpMethod.GET, request, Comment.class);
+        return response.getBody();
     }
 
 }

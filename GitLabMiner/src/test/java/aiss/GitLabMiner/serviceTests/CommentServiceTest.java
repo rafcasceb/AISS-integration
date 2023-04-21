@@ -17,19 +17,20 @@ public class CommentServiceTest {
     @Autowired
     CommentService service;
 
+    String token = "glpat-EubL6mXBLo7cMyP4nDkm";
+
     @Test
-    @DisplayName( "Get comments test")
+    @DisplayName("Get comments test")
     void getComments() {
-        List<Comment> comments = service.getComments("17960074","505", "glpat-EubL6mXBLo7cMyP4nDkm");
-        System.out.println(comments);
+        List<Comment> comments = service.getComments("17960074","505", token);
+        assertEquals(comments.get(0).getId(), 1345067735,"The id of the comment is not correct.");
     }
 
     @Test
-    @DisplayName( "Get comment with id test")
+    @DisplayName("Get comment with id test")
     void getCommentId() {
-        Comment c = service.getCommentId("17960074",
-                "505", "glpat-EubL6mXBLo7cMyP4nDkm", "1345067735");
-        System.out.println(c);
+        Comment c = service.getCommentId("17960074","505", token, "1345067735");
+        assertEquals(c.getId(), 1345067735, "The id of the comment is not correct.");
     }
 
 }

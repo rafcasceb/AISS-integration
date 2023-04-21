@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 class ProjectServiceTest {
     @Autowired
@@ -17,15 +19,16 @@ class ProjectServiceTest {
     String token = "glpat-JqffjHbjrCBtJZLNPENh";
 
     @Test
-    @DisplayName("Get project test")
+    @DisplayName("Get all projects test")
     void getAllProjects(){
         List<Project> listProjects = service.getAllProjects(token);
-        System.out.println(listProjects.get(0).getId());
+        // It always should return 20 projects
+        assertEquals(listProjects.size(), 20, "The id of the project is not correct.");
     }
     @Test
     @DisplayName("Get project test")
     void getProject(){
         Project project = service.getProject("45236382", token);
-        System.out.println(project);
+        assertEquals(project.getId(), 45236382, "The id of the project is not correct.");
     }
 }

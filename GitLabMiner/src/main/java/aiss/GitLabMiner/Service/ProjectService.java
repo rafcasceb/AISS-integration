@@ -33,12 +33,12 @@ public class ProjectService {
     }
     public Project getProject(String projectId, String token){
         HttpEntity<?> request = Auth.buildHeader(token);
-        ResponseEntity<Project[]> response = restTemplate.exchange(
+        ResponseEntity<Project> response = restTemplate.exchange(
                 baseUri + "/" + projectId,
                 HttpMethod.GET,
                 request,
-                Project[].class
+                Project.class
         );
-        return Arrays.stream(response.getBody()).toList().get(0);
+        return response.getBody();
     }
 }
