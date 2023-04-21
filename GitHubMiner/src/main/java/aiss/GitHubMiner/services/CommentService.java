@@ -15,19 +15,16 @@ public class CommentService {
     RestTemplate restTemplate;
 
     String baseUri = "https://api.github.com/repos/";
-    public List<Comment> getAllComments (String owner, String repo){
 
+    public List<Comment> getAllComments (String owner, String repo){
         Comment[] commentsArray = restTemplate
                 .getForObject(baseUri + owner + "/" + repo + "/issues/comments", Comment[].class);
         return Arrays.stream(commentsArray).toList();
-
     }
 
     public Comment getCommentsId (String owner, String repo, String id){
-
         Comment c= restTemplate.getForObject(baseUri + owner + "/" + repo + "/issues/comments/" + id, Comment.class);
         return c;
-
     }
 
 }
