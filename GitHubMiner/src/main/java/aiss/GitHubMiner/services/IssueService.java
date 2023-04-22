@@ -28,6 +28,7 @@ public class IssueService {
     RestTemplate restTemplate;
 
     String baseUri = "https://api.github.com/repos/";
+
     public List<Issue> getIssues (String owner,String repo){
 
         Issue[] issuesArray = restTemplate
@@ -35,7 +36,8 @@ public class IssueService {
         return Arrays.stream(issuesArray).toList();
 
     }
-    public ResponseEntity<Issue[]> getRequest (String uri, HttpEntity<?> header ){
+
+    private ResponseEntity<Issue[]> getRequest (String uri, HttpEntity<?> header ){
         ResponseEntity<Issue[]> response = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
@@ -62,7 +64,6 @@ public class IssueService {
         HttpEntity<?> header = Auth.buildHeader(token);
 
         while (hasMorePages && page <= maxPages) {
-
             System.out.println("Page: " + page);
 
             String uri = baseUri + owner + "/" + repo + "/issues?since=" + since + "&page=" + page;

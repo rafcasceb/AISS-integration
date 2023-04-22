@@ -29,15 +29,13 @@ public class CommitService {
     String baseUri = "https://api.github.com/repos/";
 
     public List<Commit> getCommits(String owner, String repo){
-
         Commit[] commitArray = restTemplate
                 .getForObject(baseUri + owner + "/" + repo + "/commits", Commit[].class);
 
         return  Arrays.stream(commitArray).toList();
-
     }
 
-    public ResponseEntity<Commit[]> getRequest (String uri, HttpEntity<?> header ){
+    private ResponseEntity<Commit[]> getRequest (String uri, HttpEntity<?> header ){
         ResponseEntity<Commit[]> response = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
@@ -64,7 +62,6 @@ public class CommitService {
         HttpEntity<?> header = Auth.buildHeader(token);
 
         while (hasMorePages && page <= maxPages) {
-
             System.out.println("Page: " + page);
 
             String uri = baseUri + owner + "/" + repo + "/commits?since=" + since + "&page=" + page;
