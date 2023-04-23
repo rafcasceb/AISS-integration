@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "Issue")
@@ -190,7 +191,13 @@ public class IssuesInput {
         this.state = issue.getState();
         this.createdAt = issue.getCreatedAt();
         this.updatedAt = issue.getCreatedAt();
-        this.closedAt = issue.getClosedAt().toString();
+
+        if(issue.getClosedAt() != null){
+            this.closedAt = issue.getClosedAt().toString();
+        } else {
+            this.closedAt = "not closed";
+        }
+
         this.labels = issue.getLabels();
         this.author = new UserInput(issue.getAuthor());
         this.upvotes = issue.getUpvotes();
