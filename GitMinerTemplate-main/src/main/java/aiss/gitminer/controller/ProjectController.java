@@ -20,7 +20,7 @@ public class ProjectController {
     public List<Project> findAll(){return repository.findAll();}
 
     @GetMapping("/{id}")
-    public Project findOne(@PathVariable long id){
+    public Project findOne(@PathVariable String id){
         Optional<Project> project = repository.findById(id);
         return project.get();
     }
@@ -28,6 +28,7 @@ public class ProjectController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Project project (@Valid @RequestBody Project project){
+        // System.out.println(project);
         Project _project = repository
                 .save(new Project(project.getId(),
                         project.getName(),
@@ -39,7 +40,7 @@ public class ProjectController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@Valid @RequestBody Project updated,@PathVariable long id){
+    public void update(@Valid @RequestBody Project updated,@PathVariable String id){
         Optional<Project> projectData = repository.findById(id);
 
         Project _project = projectData.get();
@@ -53,7 +54,7 @@ public class ProjectController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable long id){
+    public void delete(@PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
         }

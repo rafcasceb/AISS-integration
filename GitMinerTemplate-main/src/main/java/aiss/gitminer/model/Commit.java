@@ -125,6 +125,7 @@ public class Commit {
         this.webUrl = webUrl;
     }
 
+    public Commit () {}
     public Commit(String id, String title, String message, String authorName, String authorEmail, String authoredDate, String committerName, String committerEmail, String committedDate, String webUrl) {
         this.id = id;
         this.title = title;

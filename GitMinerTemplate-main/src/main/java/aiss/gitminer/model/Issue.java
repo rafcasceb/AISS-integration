@@ -77,6 +77,8 @@ public class Issue {
         this.comments = comments;
     }
 
+    public Issue() {};
+
     public String getId() {
         return id;
     }
