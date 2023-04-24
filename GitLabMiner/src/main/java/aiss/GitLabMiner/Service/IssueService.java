@@ -29,13 +29,13 @@ public class IssueService {
     RestTemplate restTemplate;
 
     String baseUri = "https://gitlab.com/api/v4/projects/";
-    public List<Issue> getIssues (String id){
 
+    public List<Issue> getIssues (String id){
         Issue[] issuesArray = restTemplate
                 .getForObject(baseUri + id + "/issues",Issue[].class);
         return Arrays.stream(issuesArray).toList();
-
     }
+
     private ResponseEntity<Issue[]> getRequest (String uri, HttpEntity<?> header){
         ResponseEntity<Issue[]> response = restTemplate
                 .exchange(uri,
@@ -64,7 +64,7 @@ public class IssueService {
 
         while (hasMorePages && page <= maxPages){
 
-            String uri = baseUri + id + "/issues?updated_before=" + since + "&page=" + page;
+            String uri = baseUri + id + "/issues?updated_after=" + since + "&page=" + page;
             ResponseEntity<Issue[]> response = getRequest(uri,header);
 
             issues.addAll(Arrays.asList(response.getBody()));

@@ -28,6 +28,15 @@ public class CommentService {
         return Arrays.stream(response.getBody()).toList();
     }
 
+    public List<Comment> getCommentsPagination (String projectId, String issue_iid, Integer maxPages, String token){
+        int commentsPerPage = 20;
+        HttpEntity<?> request = Auth.buildHeader(token);
+        ResponseEntity<Comment[]> response = restTemplate.exchange(
+                baseUri +  projectId + "/issues/" + issue_iid + "/notes",
+                HttpMethod.GET, request, Comment[].class);
+        return Arrays.stream(response.getBody()).limit(maxPages * commentsPerPage).toList();
+    }
+
     public Comment getCommentId (String projectId, String issue_iid, String token, String commentId){
         HttpEntity<?> request = Auth.buildHeader(token);
         ResponseEntity<Comment> response = restTemplate.exchange(

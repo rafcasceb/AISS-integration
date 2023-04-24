@@ -33,6 +33,7 @@ public class ProjectService {
                         Project[].class);
         return response;
     }
+
     public List<Project> getAllProjects(String token){
         HttpEntity<?> header = Auth.buildHeader(token);
         ResponseEntity<Project[]> response = getRequest(baseUri, header);
@@ -62,6 +63,7 @@ public class ProjectService {
         }
         return projects;
     }
+
     public Project getProject(String projectId, String token){
         HttpEntity<?> request = Auth.buildHeader(token);
         ResponseEntity<Project> response = restTemplate.exchange(

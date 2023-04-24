@@ -33,13 +33,13 @@ public class UserService {
 
     public User getUser (String id, String token){
         HttpEntity<?> request = Auth.buildHeader(token);
-        ResponseEntity<User[]> response = restTemplate.exchange(
+        ResponseEntity<User> response = restTemplate.exchange(
                 baseUri + "/" + id,
                 HttpMethod.GET,
                 request,
-                User[].class
+                User.class
         );
-        return Arrays.stream(response.getBody()).toList().get(0);
+        return response.getBody();
     }
 
 }
