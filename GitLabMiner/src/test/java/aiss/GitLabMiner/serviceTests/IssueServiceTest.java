@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class IssueServiceTest {
@@ -22,22 +23,19 @@ public class IssueServiceTest {
 
     @Test
     @DisplayName( "Get issues test")
-
     void getIssues() {
         List<Issue> issues = service
                 .getIssues("17960074");
         for(Issue i : issues){
             System.out.println(i.getDescription());
-
         }
-
     }
 
     @Test
     @DisplayName( "Get issues with pagination test")
     void getIssuesPagination() {
         String id = "4207231";
-        Integer since = 900;
+        Integer since = 900;    // issues after these days ago.
         Integer maxPages = 10;
         Integer contentLimit = maxPages*30;
 
@@ -45,17 +43,13 @@ public class IssueServiceTest {
                 .getIssuesPagination(id,"glpat-EWrMxiW1vhazpsMAsc4A",
                         since, maxPages);
 
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         LocalDateTime limit = LocalDateTime.now().minusDays(since);
 
         for(Issue i : issues){
-            LocalDateTime issueDate = LocalDateTime
-                    .parse(i.getCreatedAt(), formatter);
+            LocalDateTime issueDate = LocalDateTime.parse(i.getCreatedAt(), formatter);
 
-            //System.out.println(c.getCommittedDate());
-            assertEquals(issueDate.isAfter(limit), true, "Issue date before limit");
-
+            assertTrue(issueDate.isAfter(limit), "Issue date before limit");
         }
         assertEquals(issues.size()<=contentLimit, true, "Page limit exceeded");
     }

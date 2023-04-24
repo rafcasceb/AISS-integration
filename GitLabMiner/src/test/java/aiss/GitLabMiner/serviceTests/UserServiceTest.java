@@ -18,9 +18,17 @@ class UserServiceTest {
     String token = "glpat-EWrMxiW1vhazpsMAsc4A";
 
     @Test
-    @DisplayName("Get user test")
-    void getUser(){
-        User user = service.getUser("jack_smith", token);
+    @DisplayName("Get user by name test.")
+    void getUserName(){
+        User user = service.getUserByName("jack_smith", token);
+        assertEquals(user.getName().trim(), "Jack Smith", "Name doesn't match.");
+    }
+
+    @Test
+    @DisplayName("Get user by ID test.")
+    void getUserId(){
+        User user = service.getUser("5023502", token);
+        System.out.println(user);
         assertEquals(user.getName().trim(), "Jack Smith", "Name doesn't match.");
     }
     

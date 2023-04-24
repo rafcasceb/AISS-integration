@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class CommitServiceTest {
@@ -28,7 +29,7 @@ public class CommitServiceTest {
     }
 
     @Test
-    @DisplayName( "Get commits with pagination test")
+    @DisplayName("Get commits with pagination test")
     void getCommitsPagination() {
 
         String id = "4207231";
@@ -49,10 +50,9 @@ public class CommitServiceTest {
                     .parse(c.getCommittedDate(), formatter);
 
             //System.out.println(c.getCommittedDate());
-            assertEquals(commitDate.isAfter(limit), true, "Commit date before limit");
-
+            assertTrue(commitDate.isAfter(limit), "Commit date before limit.");
         }
-        assertEquals(commits.size()<=contentLimit, true, "Page limit exceeded");
+        assertTrue(commits.size() <= contentLimit, "Page limit exceeded.");
     }
 
 }

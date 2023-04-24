@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class CommentServiceTest {
@@ -25,6 +26,15 @@ public class CommentServiceTest {
         List<Comment> comments = service.getComments("17960074","505", token);
         assertEquals(comments.get(0).getId(), 1345067735,"The id of the comment is not correct.");
     }
+
+    @Test
+    @DisplayName("Get comments by pages test")
+    void getCommentsPagination() {
+        int maxPages = 2;
+        List<Comment> comments = service.getCommentsPagination("17960074","505", maxPages, token);
+        assertTrue(comments.size() <= 20 * maxPages, "Page limit exceeded.");
+    }
+
 
     @Test
     @DisplayName("Get comment with id test")
