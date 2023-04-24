@@ -1,16 +1,21 @@
 package aiss.GitLabMiner.Models.GitMinerInput;
 
+import aiss.GitLabMiner.Models.Comments.Comment;
 import aiss.GitLabMiner.Models.Issues.Issue;
+import aiss.GitLabMiner.Service.CommentService;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Entity
-@Table(name = "Issue")
+
 public class IssuesInput {
+
+    @Autowired
+    CommentService commentService;
 
     @Id
     @JsonProperty("id")
@@ -177,12 +182,7 @@ public class IssuesInput {
         this.comments = comments;
     }
 
-    public IssuesInput (Issue issue){
-
-        List<CommentInput>  commentsInputs = new ArrayList<>();
-        CommentInput provisional = new CommentInput("",""
-                ,new UserInput(issue.getAuthor()),"","");
-        commentsInputs.add(provisional);
+    public IssuesInput (Issue issue, Integer projectId){
 
         this.id = issue.getId().toString();
         this.refId = "I dont know what goes here";
@@ -203,7 +203,22 @@ public class IssuesInput {
         this.upvotes = issue.getUpvotes();
         this.downvotes = issue.getDownvotes();
         this.webUrl = issue.getWebUrl();
-        this.comments = commentsInputs;
+
+
+        List<Comment> ls = new ArrayList<>();
+        if (commentService != null) {
+            ls = commentService.getComments(projectId.toString(),
+                    issue.getIid().toString(),
+                    "glpat-EubL6mXBLo7cMyP4nDkm");
+        }
+
+        List<CommentInput> comments = new ArrayList<>();
+        for(Comment c: ls){
+            comments.add(new CommentInput(c.getId().toString(),
+                    c.getBody(), new UserInput(c.getAuthor()),
+                    c.getCreatedAt(),c.getUpdatedAt()));
+        }
+        this.comments = comments;
     }
 
 

@@ -18,12 +18,23 @@ public class UserService {
     @Autowired
     RestTemplate restTemplate;
 
-    String baseUri = "https://gitlab.com/api/v4/users?username=";
+    String baseUri = "https://gitlab.com/api/v4/users";
 
-    public User getUser(String userName, String token){
+    public User getUserByName(String userName, String token){
         HttpEntity<?> request = Auth.buildHeader(token);    // The actual type is HttpEntity<User[]>. Must be [] to work
         ResponseEntity<User[]> response = restTemplate.exchange(
-                baseUri + userName,
+                baseUri + "?username=" + userName,
+                HttpMethod.GET,
+                request,
+                User[].class
+        );
+        return Arrays.stream(response.getBody()).toList().get(0);
+    }
+
+    public User getUser (String id, String token){
+        HttpEntity<?> request = Auth.buildHeader(token);
+        ResponseEntity<User[]> response = restTemplate.exchange(
+                baseUri + "/" + id,
                 HttpMethod.GET,
                 request,
                 User[].class

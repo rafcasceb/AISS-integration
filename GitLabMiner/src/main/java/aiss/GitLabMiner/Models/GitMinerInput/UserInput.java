@@ -2,8 +2,10 @@ package aiss.GitLabMiner.Models.GitMinerInput;
 
 import aiss.GitLabMiner.Models.Issues.Author;
 import aiss.GitLabMiner.Models.Users.User;
+import aiss.GitLabMiner.Service.UserService;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Generated;
 import javax.persistence.Entity;
@@ -12,9 +14,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "GMUser")     // Watch out: User is a reserved keyword in H2
+
 public class UserInput {
+
+    @Autowired
+    UserService UserService;
 
     @Id
     @JsonProperty("id")
@@ -77,6 +81,19 @@ public class UserInput {
         this.webUrl = user.getWebUrl();
 
     }
+
+
+
+    public UserInput(aiss.GitLabMiner.Models.Comments.Author author) {
+        User user = UserService.getUser(author.getId().toString(), "glpat-EubL6mXBLo7cMyP4nDkm");
+        this.id = user.getId().toString();
+        this.username = user.getUsername();
+        this.name = user.getName();
+        this.avatarUrl = user.getAvatarUrl();
+        this.webUrl = user.getWebUrl();
+
+    }
+
 
     public UserInput (Author author){
         this.id = author.getId().toString();

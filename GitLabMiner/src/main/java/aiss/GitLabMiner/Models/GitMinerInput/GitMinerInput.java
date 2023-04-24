@@ -22,6 +22,7 @@ public class GitMinerInput {
     @JsonProperty("issues")
     List<IssuesInput> issues;
 
+
     public GitMinerInput (String id, String name, String web_url,
                           List<CommitInput> commits, List <IssuesInput> issues){
         this.id = id;
@@ -31,6 +32,8 @@ public class GitMinerInput {
         this.issues = issues;
 
     }
+
+    String token = "glpat-EWrMxiW1vhazpsMAsc4A";
 
     public GitMinerInput (Project project,
                           List<Commit> commits, List <Issue> issues){
@@ -47,7 +50,7 @@ public class GitMinerInput {
 
         List<IssuesInput> auxIssues = new ArrayList<>();
         for (Issue i : issues){
-            auxIssues.add(new IssuesInput(i));
+            auxIssues.add(new IssuesInput(i, project.getId()));
         }
         this.issues = auxIssues;
 
