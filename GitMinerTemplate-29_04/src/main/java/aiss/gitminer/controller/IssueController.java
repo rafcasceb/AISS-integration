@@ -2,6 +2,7 @@ package aiss.gitminer.controller;
 
 import aiss.gitminer.exceptions.CommitNotFoundException;
 import aiss.gitminer.exceptions.IssueNotFoundException;
+import aiss.gitminer.model.Comment;
 import aiss.gitminer.model.Issue;
 import aiss.gitminer.repository.IssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @RestController
@@ -19,18 +21,20 @@ public class IssueController {
 
     @GetMapping
     public List<Issue> findIssues
-            (@RequestParam(value = "author_id",required = false) String id
+            (@RequestParam(value = "authorId",required = false) String id
             ,@RequestParam(value = "state",required = false)String state)
-            throws IssueNotFoundException{
-        List<Issue> issues;
+            throws IssueNotFoundException {
+
+        List<Issue> issues = repository.findAll();
+
         if(id != null){
-            issues = repository.findByAuthorId(id);
-        }else if(state != null){
-            issues = repository.findByState(state);
+            issues = filterByAuthorId (id, issues);
         }
-        else{
-            issues = repository.findAll();
+
+        if(state != null){
+            issues = filterByState (state, issues);
         }
+
         return issues;
     }
 
@@ -42,6 +46,19 @@ public class IssueController {
             throw new IssueNotFoundException();
         }
         return issue.get();
+    }
+
+    @GetMapping("/{id}/comments")
+
+    public List<Comment> findCommentsOfOne(@PathVariable String id)
+            throws IssueNotFoundException {
+
+        Optional<Issue> issue = repository.findById(id);
+        if(!issue.isPresent()){
+            throw new IssueNotFoundException();
+        }
+
+        return issue.get().getComments();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -99,5 +116,31 @@ public class IssueController {
         if(repository.existsById(id)){
             repository.deleteById(id);
         }
+    }
+
+    List<Issue> filterByAuthorId (String id, List<Issue> Issues){
+
+        List<Issue> newIssues = new ArrayList<>(Issues);
+
+        for(Issue issue : Issues){
+            if (!issue.getAuthor().getId().equals(id)) {
+                System.out.println(issue.getAuthor().getId() + " " + id + "-------------------------------------------------------------------------------------------------------------------------------------");
+                newIssues.remove(issue);
+            }
+        }
+        return  newIssues;
+    }
+
+    List<Issue> filterByState (String state, List<Issue> Issues){
+
+        List<Issue> issueByState = repository.findByState(state);
+        List<Issue> newIssues = new ArrayList<>(Issues);
+
+        for(Issue issue : Issues){
+            if (!issueByState.contains(issue)) {
+                newIssues.remove(issue);
+            }
+        }
+        return  newIssues;
     }
 }

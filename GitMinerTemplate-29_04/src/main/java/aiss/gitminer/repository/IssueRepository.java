@@ -10,6 +10,5 @@ import java.util.List;
 @Repository
 public interface IssueRepository  extends JpaRepository<Issue, String> {
 
-    List<Issue> findByAuthorId(String id);
     List<Issue> findByState(String state);
 }
