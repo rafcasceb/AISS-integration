@@ -1,6 +1,5 @@
 package aiss.GitHubMiner.serviceTests;
 
-import aiss.GitHubMiner.models.commitsModels.Commit;
 import aiss.GitHubMiner.models.issuesModels.Issue;
 import aiss.GitHubMiner.services.*;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +18,8 @@ public class IssueServiceTest {
 
     @Autowired
     IssueService service;
+
+    String token = "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";
 
     @Test
     @DisplayName( "Get issues test")
@@ -40,9 +41,7 @@ public class IssueServiceTest {
         String repo = "spring-framework";
 
         List<Issue> issues = service
-                .getIssuesPagination(owner, repo,
-                        "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",
-                        sinceIssues,maxPages);
+                .getIssuesPagination(owner, repo, token, sinceIssues,maxPages);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         LocalDateTime limit = LocalDateTime.now().minusDays(sinceIssues);
