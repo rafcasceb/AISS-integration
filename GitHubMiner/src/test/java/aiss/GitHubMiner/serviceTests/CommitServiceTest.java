@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CommitServiceTest {
     @Autowired
     CommitService service;
+
+    String token = "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";
 
     @Test
     @DisplayName( "Get commits with pagination test")
@@ -30,9 +31,7 @@ public class CommitServiceTest {
         String repo = "spring-framework";
 
         List<Commit> commits = service
-                .getCommitsPagination(owner, repo,
-                        "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",
-                        sinceCommits,maxPages);
+                .getCommitsPagination(owner, repo, token, sinceCommits,maxPages);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         LocalDateTime limit = LocalDateTime.now().minusDays(sinceCommits);
