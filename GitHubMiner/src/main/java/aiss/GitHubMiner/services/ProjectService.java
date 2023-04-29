@@ -19,6 +19,8 @@ public class ProjectService {
     String baseUriOne = "https://api.github.com/repos/";
     String baseUriAll = "https://api.github.com/orgs/";
 
+    // owner = organization
+
     public Project getProject (String owner, String repoName){
         Project project = restTemplate.getForObject(
                 baseUriOne + owner + "/" + repoName,
