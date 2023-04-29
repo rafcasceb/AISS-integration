@@ -28,6 +28,9 @@ public class CommitService {
     RestTemplate restTemplate;
     String baseUri = "https://api.github.com/repos/";
 
+    // repo == project.getName()
+    // owner = project.getOwner().getLogin() = organization
+
     public List<Commit> getCommits(String owner, String repo){
         Commit[] commitArray = restTemplate
                 .getForObject(baseUri + owner + "/" + repo + "/commits", Commit[].class);
