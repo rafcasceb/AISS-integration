@@ -18,7 +18,21 @@ public class IssueController {
     IssueRepository repository;
 
     @GetMapping
-    public List<Issue> findAll(){return repository.findAll();}
+    public List<Issue> findIssues
+            (@RequestParam(value = "author_id",required = false) String id
+            ,@RequestParam(value = "state",required = false)String state)
+            throws IssueNotFoundException{
+        List<Issue> issues;
+        if(id != null){
+            issues = repository.findByAuthorId(id);
+        }else if(state != null){
+            issues = repository.findByState(state);
+        }
+        else{
+            issues = repository.findAll();
+        }
+        return issues;
+    }
 
     @GetMapping("/{id}")
     public Issue findOne(@PathVariable String id)
