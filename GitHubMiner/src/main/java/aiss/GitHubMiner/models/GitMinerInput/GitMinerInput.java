@@ -53,6 +53,15 @@ public class GitMinerInput {
     @Autowired
     CommitService commitService;
 
+
+    public GitMinerInput(Project project, List<Commit> commits, List<Issue> issues){
+        this.id = project.getId();
+        this.name = project.getName();
+        this.url = project.getUrl();
+        this.commits = commits.stream().map(c -> new CommitInput(c)).collect(Collectors.toList());
+        this.issues = issues.stream().map(i -> new IssueInput(i)).collect(Collectors.toList());
+    }
+
     public GitMinerInput(Project project){
         List<CommitInput> commitInputs = getCommitsOfProject(project);
         List<IssueInput> issueInputs = getIssuesOfProject(project);
