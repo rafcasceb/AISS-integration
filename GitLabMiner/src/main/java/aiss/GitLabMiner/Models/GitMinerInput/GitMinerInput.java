@@ -30,13 +30,12 @@ public class GitMinerInput {
         this.web_url = web_url;
         this.commits = commits;
         this.issues = issues;
-
     }
 
     String token = "glpat-EWrMxiW1vhazpsMAsc4A";
 
     public GitMinerInput (Project project,
-                          List<Commit> commits, List <Issue> issues){
+                          List<Commit> commits, List<Issue> issues){
 
         this.id = project.getId().toString();
         this.name = project.getName();
@@ -53,9 +52,6 @@ public class GitMinerInput {
             auxIssues.add(new IssuesInput(i, project.getId()));
         }
         this.issues = auxIssues;
-
-
-
     }
 
 

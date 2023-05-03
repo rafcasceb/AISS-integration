@@ -121,6 +121,8 @@ public class CommitInput {
         this.webUrl = webUrl;
     }
 
+
+
     public CommitInput(String id, String title, String message, String authorName, String authorEmail, String authoredDate, String committerName, String committerEmail, String committedDate, String webUrl) {
         this.id = id;
         this.title = title;

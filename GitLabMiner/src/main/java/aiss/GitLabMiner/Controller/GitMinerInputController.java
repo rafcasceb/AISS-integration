@@ -64,7 +64,6 @@ public class GitMinerInputController {
         List<Commit> commits = CommitService.getCommitsPagination(id, token, sinceCommits, maxPages);
         List<Issue> issues = IssueService.getIssuesPagination(id, token, sinceIssues, maxPages);
 
-
         return new GitMinerInput(project, commits, issues);
     }
 

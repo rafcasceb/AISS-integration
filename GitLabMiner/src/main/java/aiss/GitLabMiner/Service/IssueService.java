@@ -63,7 +63,6 @@ public class IssueService {
         HttpEntity<?> header = Auth.buildHeader(token);
 
         while (hasMorePages && page <= maxPages){
-
             String uri = baseUri + id + "/issues?updated_after=" + since + "&page=" + page;
             ResponseEntity<Issue[]> response = getRequest(uri,header);
 
