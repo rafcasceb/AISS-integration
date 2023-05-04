@@ -182,13 +182,11 @@ public class IssuesInput {
         this.comments = comments;
     }
 
-
-
-
-    public IssuesInput (Issue issue, Integer projectId){
+    public IssuesInput () {}
+    public IssuesInput (Issue issue, Integer projectId, List<Comment> issueComments){
 
         this.id = issue.getId().toString();
-        this.refId = issue.getIid().toString();
+        this.refId = "I dont know what goes here";
         this.title = issue.getTitle();
         this.description = issue.getDescription();
         this.state = issue.getState();
@@ -207,16 +205,8 @@ public class IssuesInput {
         this.downvotes = issue.getDownvotes();
         this.webUrl = issue.getWebUrl();
 
-
-        List<Comment> ls = new ArrayList<>();
-        if (commentService != null) {
-            ls = commentService.getComments(projectId.toString(),
-                    issue.getIid().toString(),
-                    "glpat-EubL6mXBLo7cMyP4nDkm");
-        }
-
         List<CommentInput> comments = new ArrayList<>();
-        for(Comment c: ls){
+        for(Comment c: issueComments){
             comments.add(new CommentInput(c.getId().toString(),
                     c.getBody(), new UserInput(c.getAuthor()),
                     c.getCreatedAt(),c.getUpdatedAt()));

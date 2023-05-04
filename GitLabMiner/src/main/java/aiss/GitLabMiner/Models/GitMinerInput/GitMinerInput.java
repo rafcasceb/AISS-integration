@@ -1,4 +1,5 @@
 package aiss.GitLabMiner.Models.GitMinerInput;
+import aiss.GitLabMiner.Models.Comments.Comment;
 import aiss.GitLabMiner.Models.Commits.Commit;
 import aiss.GitLabMiner.Models.Issues.Issue;
 import aiss.GitLabMiner.Models.Projects.Project;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GitMinerInput {
 
@@ -30,12 +32,15 @@ public class GitMinerInput {
         this.web_url = web_url;
         this.commits = commits;
         this.issues = issues;
+
     }
 
     String token = "glpat-EWrMxiW1vhazpsMAsc4A";
 
+    public GitMinerInput (){}
     public GitMinerInput (Project project,
-                          List<Commit> commits, List<Issue> issues){
+                          List<Commit> commits, List <Issue> issues,
+                            Map<Integer, List<Comment>> issueComments){
 
         this.id = project.getId().toString();
         this.name = project.getName();
@@ -49,9 +54,12 @@ public class GitMinerInput {
 
         List<IssuesInput> auxIssues = new ArrayList<>();
         for (Issue i : issues){
-            auxIssues.add(new IssuesInput(i, project.getId()));
+            auxIssues.add(new IssuesInput(i, project.getId(), issueComments.get(i.getId())));
         }
         this.issues = auxIssues;
+
+
+
     }
 
 

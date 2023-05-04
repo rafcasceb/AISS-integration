@@ -66,6 +66,7 @@ public class ProjectService {
 
     public Project getProject(String projectId, String token){
         HttpEntity<?> request = Auth.buildHeader(token);
+        System.out.println(projectId);
         ResponseEntity<Project> response = restTemplate.exchange(
                 baseUri + "/" + projectId,
                 HttpMethod.GET,

@@ -24,6 +24,7 @@ public class CommentServiceTest {
     @DisplayName("Get comments test")
     void getComments() {
         List<Comment> comments = service.getComments("17960074","505", token);
+        //System.out.println(comments.get(1).getBody());
         assertEquals(comments.get(0).getId(), 1345067735,"The id of the comment is not correct.");
     }
 

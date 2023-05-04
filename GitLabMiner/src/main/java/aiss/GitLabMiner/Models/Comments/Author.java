@@ -35,6 +35,10 @@ public class Author {
     private String state;
     @JsonProperty("created_at")
     private String createdAt;
+    @JsonProperty("avatar_Url")
+    private String avatarUrl;
+    @JsonProperty("web_Url")
+    private String webUrl;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -46,6 +50,26 @@ public class Author {
     @JsonProperty("id")
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @JsonProperty("web_Url")
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    @JsonProperty("web_Url")
+    public void setWebUrl(String s) {
+        this.webUrl = s;
+    }
+
+    @JsonProperty("avatar_Url")
+    public String getAvatarUrlUrl() {
+        return avatarUrl;
+    }
+
+    @JsonProperty("avatar_Url")
+    public void setAvatarUrlUrl(String s) {
+        this.avatarUrl = s;
     }
 
     @JsonProperty("username")

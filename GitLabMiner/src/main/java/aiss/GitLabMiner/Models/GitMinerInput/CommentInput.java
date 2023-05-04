@@ -70,6 +70,8 @@ public class CommentInput {
         this.updatedAt = updatedAt;
     }
 
+    public CommentInput () {}
+
     public CommentInput (String id, String body, UserInput author, String created, String updated) {
 
         this.id = id;

@@ -82,15 +82,16 @@ public class UserInput {
 
     }
 
+    public UserInput () {}
 
 
     public UserInput(aiss.GitLabMiner.Models.Comments.Author author) {
-        User user = UserService.getUser(author.getId().toString(), "glpat-EubL6mXBLo7cMyP4nDkm");
-        this.id = user.getId().toString();
-        this.username = user.getUsername();
-        this.name = user.getName();
-        this.avatarUrl = user.getAvatarUrl();
-        this.webUrl = user.getWebUrl();
+
+        this.id = author.getId().toString();
+        this.username = author.getUsername();
+        this.name = author.getName();
+        this.avatarUrl = author.getAvatarUrlUrl();
+        this.webUrl = author.getWebUrl();
 
     }
 

@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -64,11 +65,18 @@ public class CommitService {
         while (hasMorePages && page <= maxPages){
 
             String uri = baseUri + id + "/repository/commits?since=" + since + "&page=" + page;
-            ResponseEntity<Commit[]> response = getRequest(uri,header);
 
-            commits.addAll(Arrays.asList(response.getBody()));
-            hasMorePages = Pagination.hasMorePages(response);
-            page ++;
+            try {
+                ResponseEntity<Commit[]> response = getRequest(uri,header);
+                commits.addAll(Arrays.asList(response.getBody()));
+                hasMorePages = Pagination.hasMorePages(response);
+                page ++;
+            }
+            catch (HttpClientErrorException.NotFound e) {
+                // Manejar la excepción 404
+                commits.clear();
+                return commits;
+            }
         }
         return commits;
     }
