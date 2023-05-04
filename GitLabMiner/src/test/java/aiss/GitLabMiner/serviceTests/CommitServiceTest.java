@@ -35,7 +35,7 @@ public class CommitServiceTest {
         String id = "4207231";
         Integer since = 20;
         Integer maxPages = 10;
-        Integer contentLimit = maxPages*30;
+        Integer contentLimit = maxPages*20;
 
         List<Commit> commits = service
                 .getCommitsPagination(id,"glpat-EWrMxiW1vhazpsMAsc4A",

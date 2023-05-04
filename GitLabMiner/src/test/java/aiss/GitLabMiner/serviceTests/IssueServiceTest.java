@@ -37,7 +37,7 @@ public class IssueServiceTest {
         String id = "4207231";
         Integer since = 900;    // issues after these days ago.
         Integer maxPages = 10;
-        Integer contentLimit = maxPages*30;
+        Integer contentLimit = maxPages*20;
 
         List<Issue> issues = service
                 .getIssuesPagination(id,"glpat-EWrMxiW1vhazpsMAsc4A",
