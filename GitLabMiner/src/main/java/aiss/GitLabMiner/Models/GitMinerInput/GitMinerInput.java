@@ -25,6 +25,8 @@ public class GitMinerInput {
     List<IssuesInput> issues;
 
 
+    String token = "glpat-EWrMxiW1vhazpsMAsc4A";
+
     public GitMinerInput (String id, String name, String web_url,
                           List<CommitInput> commits, List <IssuesInput> issues){
         this.id = id;
@@ -32,15 +34,13 @@ public class GitMinerInput {
         this.web_url = web_url;
         this.commits = commits;
         this.issues = issues;
-
     }
 
-    String token = "glpat-EWrMxiW1vhazpsMAsc4A";
-
     public GitMinerInput (){}
+
     public GitMinerInput (Project project,
                           List<Commit> commits, List <Issue> issues,
-                            Map<Integer, List<Comment>> issueComments){
+                            Map<Integer,List<Comment>> issueComments){
 
         this.id = project.getId().toString();
         this.name = project.getName();

@@ -182,11 +182,13 @@ public class IssuesInput {
         this.comments = comments;
     }
 
+
     public IssuesInput () {}
+
     public IssuesInput (Issue issue, Integer projectId, List<Comment> issueComments){
 
         this.id = issue.getId().toString();
-        this.refId = "I dont know what goes here";
+        this.refId = issue.getIid().toString();
         this.title = issue.getTitle();
         this.description = issue.getDescription();
         this.state = issue.getState();

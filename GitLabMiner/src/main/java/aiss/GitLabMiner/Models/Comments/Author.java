@@ -63,12 +63,12 @@ public class Author {
     }
 
     @JsonProperty("avatar_Url")
-    public String getAvatarUrlUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 
     @JsonProperty("avatar_Url")
-    public void setAvatarUrlUrl(String s) {
+    public void setAvatarUrl(String s) {
         this.avatarUrl = s;
     }
 

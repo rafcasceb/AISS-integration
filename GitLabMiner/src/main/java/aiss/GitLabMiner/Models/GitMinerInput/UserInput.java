@@ -73,28 +73,25 @@ public class UserInput {
         this.webUrl = webUrl;
     }
 
+
+
+    public UserInput () {}
+
     public UserInput (User user){
         this.id = user.getId().toString();
         this.username = user.getUsername();
         this.name = user.getName();
         this.avatarUrl = user.getAvatarUrl();
         this.webUrl = user.getWebUrl();
-
     }
 
-    public UserInput () {}
-
-
     public UserInput(aiss.GitLabMiner.Models.Comments.Author author) {
-
         this.id = author.getId().toString();
         this.username = author.getUsername();
         this.name = author.getName();
-        this.avatarUrl = author.getAvatarUrlUrl();
+        this.avatarUrl = author.getAvatarUrl();
         this.webUrl = author.getWebUrl();
-
     }
-
 
     public UserInput (Author author){
         this.id = author.getId().toString();

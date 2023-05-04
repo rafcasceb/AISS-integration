@@ -80,18 +80,15 @@ public class GitMinerInputController {
 
             List<Comment> commentsOfIssue = CommentService.getCommentsPagination(
                     project.getId().toString(),issue.getIid().toString(),maxPages,token);
-            issueComments.put(issue.getId(), commentsOfIssue);
 
             for (Comment comment : commentsOfIssue){
-
                 User user = UserService.getUser(comment.getAuthor().getId().toString(), token);
-                comment.getAuthor().setAvatarUrlUrl(user.getAvatarUrl());
+                comment.getAuthor().setAvatarUrl(user.getAvatarUrl());
                 comment.getAuthor().setWebUrl(user.getWebUrl());
             }
+
+            issueComments.put(issue.getId(), commentsOfIssue);
         }
-
-
-
 
         return new GitMinerInput(project, commits, issues, issueComments);
     }
