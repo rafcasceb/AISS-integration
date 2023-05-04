@@ -1,5 +1,6 @@
 package aiss.GitHubMiner.models.GitMinerInput;
 
+import aiss.GitHubMiner.models.commentsModels.Comment;
 import aiss.GitHubMiner.models.commitsModels.Commit;
 import aiss.GitHubMiner.models.issuesModels.Issue;
 import aiss.GitHubMiner.models.projectsModels.Project;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.Id;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GitMinerInput {
@@ -53,36 +55,16 @@ public class GitMinerInput {
     @Autowired
     CommitService commitService;
 
+    public GitMinerInput(){}
 
-    public GitMinerInput(Project project, List<Commit> commits, List<Issue> issues){
+    public GitMinerInput(Project project, List<Commit> commits, List<Issue> issues, Map<String,List<Comment>> issuesComments) {
         this.id = project.getId();
         this.name = project.getName();
         this.url = project.getUrl();
-        this.commits = commits.stream().map(c -> new CommitInput(c)).collect(Collectors.toList());
-        this.issues = issues.stream().map(i -> new IssueInput(i)).collect(Collectors.toList());
-    }
-
-    public GitMinerInput(Project project){
-        List<CommitInput> commitInputs = getCommitsOfProject(project);
-        List<IssueInput> issueInputs = getIssuesOfProject(project);
-
-        this.id = project.getId();
-        this.name = project.getName();
-        this.url = project.getUrl();
-        this.commits = commitInputs;
-        this.issues = issueInputs;
-    }
-
-
-    private List<CommitInput> getCommitsOfProject(Project project){
-        List<Commit> commits = commitService.getCommits(project.getOwner().getLogin(), project.getName());
-        List<CommitInput> commitInputs = commits.stream().map(c -> new CommitInput(c)).collect(Collectors.toList());
-        return commitInputs;
-    }
-    private List<IssueInput> getIssuesOfProject(Project project){
-        List<Issue> issues = issueService.getIssues(project.getOwner().getLogin(), project.getName());
-        List<IssueInput> issueInputs = issues.stream().map(i -> new IssueInput(i)).collect(Collectors.toList());
-        return issueInputs;
+        this.commits = commits.stream().map(c -> new CommitInput(c))
+                .collect(Collectors.toList());
+        this.issues = issues.stream().map(i -> new IssueInput(i, issuesComments.get(i.getId())))
+                .collect(Collectors.toList());
     }
 
 }

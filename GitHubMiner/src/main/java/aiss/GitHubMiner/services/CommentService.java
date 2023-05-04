@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -23,8 +24,12 @@ public class CommentService {
     }
 
     public Comment getCommentsId (String owner, String repo, String id){
-        Comment c= restTemplate.getForObject(baseUri + owner + "/" + repo + "/issues/comments/" + id, Comment.class);
-        return c;
+        return restTemplate.getForObject(baseUri + owner + "/" + repo + "/issues/comments/" + id, Comment.class);
+    }
+
+    public List<Comment> getCommentsPagination(String owner, String repo, Integer maxPages){
+        int commentsByPage = 20;
+        return getAllComments(owner,repo).stream().limit(maxPages * commentsByPage).collect(Collectors.toList());
     }
 
 }

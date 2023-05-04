@@ -186,10 +186,9 @@ public class IssueInput {
     @Autowired
     CommentService service;
 
-    public IssueInput(Issue issue){
+    public IssueInput(){}
 
-        List<CommentInput> commentsInputs = getCommentsOfIssue(issue);
-
+    public IssueInput(Issue issue, List<Comment> comments){
         this.id = issue.getId().toString();
         this.refId = issue.getNodeId();
         this.title = issue.getTitle();
@@ -201,16 +200,9 @@ public class IssueInput {
         this.labels = issue.getLabels().stream().map(l -> l.getId()).collect(Collectors.toList());
         this.upvotes = null;  // Doesn't exist
         this.downvotes = null;  // Doesn't exist
-        this.author = new UserInput(issue.getUser().getLogin());
-        this.assignee = new UserInput(issue.getAssignee().getLogin());
-
-        this.comments = commentsInputs;
-    }
-
-    private List<CommentInput> getCommentsOfIssue(Issue issue){
-        List<Comment> comments = service.getAllComments(issue.getRepository().getOwner().getLogin(), issue.getRepository().getName());
-        List<CommentInput> commentsInputs = comments.stream().map(c -> new CommentInput(c)).collect(Collectors.toList());
-        return commentsInputs;
+        this.author = new UserInput(issue.getUser());
+        this.assignee = new UserInput(issue.getAssignee());
+        this.comments = comments.stream().map(c -> new CommentInput(c)).collect(Collectors.toList());
     }
 
 }

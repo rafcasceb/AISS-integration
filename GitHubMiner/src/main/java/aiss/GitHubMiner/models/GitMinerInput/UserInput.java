@@ -1,5 +1,6 @@
 package aiss.GitHubMiner.models.GitMinerInput;
 
+import aiss.GitHubMiner.models.issuesModels.Assignee;
 import aiss.GitHubMiner.models.usersModels.User;
 import aiss.GitHubMiner.services.UserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,6 +79,8 @@ public class UserInput {
     @Autowired
     UserService service;
 
+    public UserInput(){}
+
     public UserInput(User user){
         this.id = user.getId().toString();
         this.username = user.getLogin();
@@ -86,14 +89,30 @@ public class UserInput {
         this.webUrl = user.getUrl();
     }
 
-    public UserInput (String username){
-        User fullUser = service.getUser(username);
-
-        this.id = fullUser.getId().toString();
-        this.username = fullUser.getLogin();
-        this.name = fullUser.getName();
-        this.avatarUrl = fullUser.getAvatarUrl();
-        this.webUrl = fullUser.getUrl();
+    public UserInput(aiss.GitHubMiner.models.commentsModels.User user){
+        this.id = user.getId().toString();
+        this.username = user.getLogin();
+        this.name = user.getName();
+        this.avatarUrl = user.getAvatarUrl();
+        this.webUrl = user.getUrl();
     }
+
+    public UserInput(aiss.GitHubMiner.models.issuesModels.User user){
+        this.id = user.getId().toString();
+        this.username = user.getLogin();
+        this.name = user.getName();
+        this.avatarUrl = user.getAvatarUrl();
+        this.webUrl = user.getUrl();
+    }
+
+    public UserInput(Assignee user){
+        this.id = user.getId().toString();
+        this.username = user.getLogin();
+        this.name = user.getName();
+        this.avatarUrl = user.getAvatarUrl();
+        this.webUrl = user.getUrl();
+    }
+
+
 }
 

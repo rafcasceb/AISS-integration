@@ -73,10 +73,12 @@ public class CommentInput {
     }
 
 
+    public CommentInput(){}
+
     public CommentInput(Comment comment){
         this.id = comment.getId().toString();
         this.body = comment.getBody();
-        this.author = new UserInput(comment.getUser().getLogin());
+        this.author = new UserInput(comment.getUser());
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();
     }

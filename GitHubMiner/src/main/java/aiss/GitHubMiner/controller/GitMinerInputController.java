@@ -1,22 +1,26 @@
 package aiss.GitHubMiner.controller;
 
 import aiss.GitHubMiner.models.GitMinerInput.GitMinerInput;
+import aiss.GitHubMiner.models.commentsModels.Comment;
 import aiss.GitHubMiner.models.commitsModels.Commit;
 import aiss.GitHubMiner.models.issuesModels.Issue;
 import aiss.GitHubMiner.models.projectsModels.Project;
-import aiss.GitHubMiner.services.CommitService;
-import aiss.GitHubMiner.services.IssueService;
-import aiss.GitHubMiner.services.ProjectService;
+import aiss.GitHubMiner.models.usersModels.User;
+import aiss.GitHubMiner.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -28,6 +32,10 @@ public class GitMinerInputController {
     ProjectService ProjectService;
     @Autowired
     IssueService IssueService;
+    @Autowired
+    CommentService CommentService;
+    @Autowired
+    UserService UserService;
     @Autowired
     RestTemplate RestTemplate;
 
@@ -47,9 +55,8 @@ public class GitMinerInputController {
         List<Project> projects = ProjectService.getProjectsPagination(owner, maxPages);
 
         for (Project p: projects) {
-            List<Commit> commits = CommitService.getCommitsPagination(owner, p.getName(), token, sinceCommits, maxPages);
-            List<Issue> issues = IssueService.getIssuesPagination(owner, p.getName(), token, sinceIssues ,maxPages);
-            res.add(new GitMinerInput(p, commits, issues));
+            String repoName = p.getName();
+            res.add(findOne(owner, repoName, maxPages, sinceCommits, sinceIssues));
         }
 
         return res;
@@ -66,7 +73,24 @@ public class GitMinerInputController {
         Project project = ProjectService.getProject(owner, repoName);
         List<Commit> commits = CommitService.getCommitsPagination(owner, repoName, token, sinceCommits, maxPages);
         List<Issue> issues = IssueService.getIssuesPagination(owner, repoName, token, sinceIssues ,maxPages);
-        return new GitMinerInput(project, commits, issues);
+
+        Map<String,List<Comment>> issuesComments = new HashMap<>();
+        for (Issue issue: issues){
+            List<Comment> commentsOfIssue = CommentService.getCommentsPagination(owner, repoName, maxPages);
+            for (Comment comment: commentsOfIssue){
+                User fullUserComment = UserService.getUser(comment.getUser().getLogin());
+                comment.getUser().setName(fullUserComment.getName());
+            }
+            issuesComments.put(issue.getId(), commentsOfIssue);
+
+            User fullUserIssue = UserService.getUser(issue.getUser().getLogin());
+            issue.getUser().setName(fullUserIssue.getName());
+
+            User fullAssigneeIssue = UserService.getUser(issue.getUser().getLogin());
+            issue.getAssignee().setName(fullAssigneeIssue.getName());
+        }
+
+        return new GitMinerInput(project, commits, issues, issuesComments);
     }
 
 
@@ -108,8 +132,13 @@ public class GitMinerInputController {
         String url = "http://localhost:8080/api/projects";
 
         HttpEntity<GitMinerInput> request = new HttpEntity<GitMinerInput>(project, headers);
-        RestTemplate.postForObject(url, request, GitMinerInput.class);
-
-        return  project;
+        try {
+            GitMinerInput createdProject = RestTemplate.postForObject(url, request, GitMinerInput.class);
+            return createdProject;
+        } catch (HttpStatusCodeException e) { // Manejar el error en la solicitud POST
+            throw new ResponseStatusException(
+                    HttpStatus.valueOf(e.getRawStatusCode()),
+                    "Error en la solicitud POST al endpoint de GitMiner ", e);
+        }
     }
 }

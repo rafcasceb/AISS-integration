@@ -126,6 +126,7 @@ public class CommitInput {
     }
 
 
+    public CommitInput(){}
 
     public CommitInput(Commit commit){
         String message = commit.getCommit().getMessage();
