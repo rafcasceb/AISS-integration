@@ -2,22 +2,14 @@ package aiss.GitLabMiner.Models.GitMinerInput;
 
 import aiss.GitLabMiner.Models.Comments.Comment;
 import aiss.GitLabMiner.Models.Issues.Issue;
-import aiss.GitLabMiner.Service.CommentService;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 public class IssuesInput {
 
-    @Autowired
-    CommentService commentService;
-
-    @Id
     @JsonProperty("id")
     private String id;
 
@@ -26,7 +18,6 @@ public class IssuesInput {
     @JsonProperty("title")
     private String title;
     @JsonProperty("description")
-    @Column(columnDefinition="TEXT")
     private String description;
     @JsonProperty("state")
     private String state;
@@ -38,16 +29,10 @@ public class IssuesInput {
     @JsonProperty("closed_at")
     private String closedAt;
     @JsonProperty("labels")
-    @ElementCollection
     private List<String> labels;
     @JsonProperty("author")
-    //@NotEmpty(message = "The author of the issue cannot be empty")
-    @JoinColumn(name = "author_id",referencedColumnName = "id")
-    @OneToOne(cascade=CascadeType.ALL)
     private UserInput author;
     @JsonProperty("assignee")
-    @JoinColumn(name = "assignee_id",referencedColumnName = "id")
-    @OneToOne(cascade=CascadeType.ALL)
     private UserInput assignee;
     @JsonProperty("upvotes")
     private Integer upvotes;
@@ -58,8 +43,6 @@ public class IssuesInput {
     private String webUrl;
 
     @JsonProperty("comments")
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "issueId")
     private List<CommentInput> comments;
 
     public String getId() {

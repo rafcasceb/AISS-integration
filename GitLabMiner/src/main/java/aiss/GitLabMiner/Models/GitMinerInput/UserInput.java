@@ -2,29 +2,13 @@ package aiss.GitLabMiner.Models.GitMinerInput;
 
 import aiss.GitLabMiner.Models.Issues.Author;
 import aiss.GitLabMiner.Models.Users.User;
-import aiss.GitLabMiner.Service.UserService;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Generated;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 
 public class UserInput {
 
-    @Autowired
-    UserService UserService;
-
-    @Id
     @JsonProperty("id")
     private String id;
     @JsonProperty("username")
-    @NotEmpty(message = "The username cannot be empty")
     private String username;
     @JsonProperty("name")
     private String name;

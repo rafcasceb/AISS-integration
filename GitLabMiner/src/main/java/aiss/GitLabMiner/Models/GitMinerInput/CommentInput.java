@@ -1,31 +1,18 @@
 package aiss.GitLabMiner.Models.GitMinerInput;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.annotation.Generated;
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 public class CommentInput {
 
-    @Id
     @JsonProperty("id")
     private String id;
     @JsonProperty("body")
-    @NotEmpty(message = "The message cannot be empty.")
-    @Column(columnDefinition="TEXT")
     private String body;
 
     @JsonProperty("author")
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
-    @OneToOne(cascade=CascadeType.ALL)
     private UserInput author;
 
     @JsonProperty("created_at")
-    @NotEmpty(message = "The field created_at cannot be empty.")
     private String createdAt;
     @JsonProperty("updated_at")
     private String updatedAt;
