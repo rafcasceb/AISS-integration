@@ -5,11 +5,19 @@ import aiss.gitminer.exceptions.IssueNotFoundException;
 import aiss.gitminer.model.Comment;
 import aiss.gitminer.model.Issue;
 import aiss.gitminer.repository.IssueRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,20 +26,29 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+@Tag(name="Issue",description = "Issue management API")
 @RestController
 @RequestMapping("/gitminer/issues")
 public class IssueController {
     @Autowired
     IssueRepository repository;
-
+    @Operation(
+            summary = "Retrieve a list of issues",
+            description = "Get a list of issues",
+            tags = { "issues", "get"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",content = {@Content(schema = @Schema(implementation = Issue.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
+    })
     @GetMapping
     public List<Issue> findIssues
-            (@RequestParam(value = "authorId",required = false) String id,
-             @RequestParam(value = "state",required = false)String state,
-             @RequestParam(value = "keyword",required = false) String keyword,
-             @RequestParam(value = "longerFirst", required = false) Boolean longerFirst,
-             @RequestParam(defaultValue = "0")int page,
-             @RequestParam(defaultValue = "10")int size)
+            (@Parameter(description = "Id of the author")@RequestParam(value = "authorId",required = false) String id,
+             @Parameter(description = "State of the issue")@RequestParam(value = "state",required = false)String state,
+             @Parameter(description = "Keyword to filter")@RequestParam(value = "keyword",required = false) String keyword,
+             @Parameter(description = "Order by long first")@RequestParam(value = "longerFirst", required = false) Boolean longerFirst,
+             @Parameter(description = "Page retrieved")@RequestParam(defaultValue = "0")int page,
+             @Parameter(description = "Number of elements retrieved")@RequestParam(defaultValue = "10")int size)
             throws IssueNotFoundException {
 
 
@@ -67,9 +84,17 @@ public class IssueController {
             return description.length();
         }
     }
-
+    @Operation(
+            summary = "Retrieve an issue",
+            description = "Get an issue",
+            tags = { "issue", "get"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",content = {@Content(schema = @Schema(implementation = Issue.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
+    })
     @GetMapping("/{id}")
-    public Issue findOne(@PathVariable String id)
+    public Issue findOne(@Parameter(description = "Id of the issue")@PathVariable String id)
             throws IssueNotFoundException {
         Optional<Issue> issue = repository.findById(id);
         if(!issue.isPresent()){
@@ -77,10 +102,18 @@ public class IssueController {
         }
         return issue.get();
     }
-
+    @Operation(
+            summary = "Retrieve comments of an issue",
+            description = "Get comments of an issue",
+            tags = { "issue", "get", "comments"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",content = {@Content(schema = @Schema(implementation = Issue.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
+    })
     @GetMapping("/{id}/comments")
 
-    public List<Comment> findCommentsOfOne(@PathVariable String id)
+    public List<Comment> findCommentsOfOne(@Parameter(description = "Id of the issue")@PathVariable String id)
             throws IssueNotFoundException {
 
         Optional<Issue> issue = repository.findById(id);
@@ -90,10 +123,18 @@ public class IssueController {
 
         return issue.get().getComments();
     }
-
+    @Operation(
+            summary = "Create an issue",
+            description = "Create an issue whose data is passed in the body of the request",
+            tags = { "issue", "create"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201",content = {@Content(schema = @Schema(implementation = Issue.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",content = {@Content(schema = @Schema())})
+    })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Issue create(@Valid @RequestBody Issue issue){
+    public Issue create(@Parameter(description = "Issue to be created")@Valid @RequestBody Issue issue){
         Issue _issue = repository
                 .save(new Issue(issue.getId(),
                         issue.getRefId(),
@@ -113,9 +154,19 @@ public class IssueController {
                         ));
         return _issue;
     }
+    @Operation(
+            summary = "Update an issue",
+            description = "Update an existing issue with data passed on the body of the request",
+            tags = { "issue", "update"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204",content = {@Content(schema = @Schema(implementation = Issue.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())}),
+                    @ApiResponse(responseCode = "400",content = {@Content(schema = @Schema())})
+    })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@Valid @RequestBody Issue updated,@PathVariable String id)
+    public void update(@Parameter(description = "Issue information to be updated")@Valid @RequestBody Issue updated,@Parameter(description = "Id of the issue to update")@PathVariable String id)
             throws IssueNotFoundException{
 
         Optional<Issue> issueData = repository.findById(id);
@@ -139,10 +190,19 @@ public class IssueController {
         repository.save(_issue);
 
     }
-
+    @Operation(
+            summary = "Delete an issue",
+            description = "Delete an existing issue by the id specified",
+            tags = { "issue", "delete"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204",content = {@Content(schema = @Schema(implementation = Issue.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400",content = {@Content(schema = @Schema())})
+    })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete (@PathVariable String id){
+    public void delete (@Parameter(description = "Issue id to be deleted")@PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
         }
