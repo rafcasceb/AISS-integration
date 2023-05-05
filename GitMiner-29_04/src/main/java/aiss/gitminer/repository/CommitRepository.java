@@ -13,5 +13,7 @@ import java.util.UUID;
 @Repository
 public interface CommitRepository  extends JpaRepository<Commit, String> {
     List<Commit> findByauthorEmail(String email);
+    List<Commit> findBycommitterName(String committer_name);
+
 
 }

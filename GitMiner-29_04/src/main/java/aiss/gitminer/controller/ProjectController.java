@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,19 @@ public class ProjectController {
     ProjectRepository repository;
 
     @GetMapping
-    public List<Project> findAll(){return repository.findAll();}
+    public List<Project> findAll(@RequestParam(value = "title",required = false) String title,
+                                 @RequestParam(value = "complexLast",required = false) Boolean complexLast) {
+        List<Project> projects = repository.findAll();
+        if(title != null) projects = projects.stream().filter(x -> x.getName().equals(title)).toList();
+        if(complexLast != null){
+            if(complexLast){
+                projects.sort(Comparator.comparing(x -> x.getCommits().size()
+                        + x.getIssues().size() +
+                        x.getIssues().stream().mapToInt(y -> y.getComments().size()).sum()));
+            }
+        }
+        return projects;
+    }
 
     @GetMapping("/{id}")
     public Project findOne(@PathVariable String id)

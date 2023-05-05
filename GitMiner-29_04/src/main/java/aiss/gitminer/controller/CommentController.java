@@ -9,9 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/gitminer/comments")
 public class CommentController {
@@ -19,7 +23,30 @@ public class CommentController {
     CommentRepository repository;
 
     @GetMapping
-    public List<Comment> findAll(){return repository.findAll();}
+    public List<Comment> findAll(@RequestParam(value = "word", required = false) String word,
+                                 @RequestParam(value = "author", required = false) String author,
+                                 @RequestParam(value = "recentFirst", required = false) Boolean recentFirst) {
+
+        List<Comment> comments = repository.findAll();
+
+        if (word != null) comments = comments.stream()
+                .filter(x -> x.getBody().contains(word)).toList();
+        if (author != null) comments = comments.stream()
+                .filter(x -> x.getAuthor().getUsername().equals(author)).toList();
+
+        if (recentFirst != null){
+            if (recentFirst) {
+                comments.sort(Comparator.comparing(x -> ZonedDateTime.parse(x.getUpdatedAt()).toLocalDate()));
+                //reversed
+            } else {
+                comments.sort(Comparator.comparing(x -> ZonedDateTime.parse(x.getUpdatedAt()).toLocalDate()));
+            }
+        }
+
+
+        return comments;
+
+    }
 
     @GetMapping("/{id}")
     public Comment findOne(@PathVariable String id) throws  CommentNotFoundException {

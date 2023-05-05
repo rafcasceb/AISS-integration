@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 @RestController
@@ -21,21 +23,39 @@ public class IssueController {
 
     @GetMapping
     public List<Issue> findIssues
-            (@RequestParam(value = "authorId",required = false) String id
-            ,@RequestParam(value = "state",required = false)String state)
+            (@RequestParam(value = "authorId",required = false) String id,
+             @RequestParam(value = "state",required = false)String state,
+             @RequestParam(value = "keyword",required = false) String keyword,
+             @RequestParam(value = "longerFirst", required = false) Boolean longerFirst)
             throws IssueNotFoundException {
 
-        List<Issue> issues = repository.findAll();
+        List<Issue> issues = new ArrayList<>(repository.findAll());
 
-        if(id != null){
-            issues = filterByAuthorId (id, issues);
-        }
+        if(id != null) issues = filterByAuthorId (id, issues);
+        if(state != null) issues = filterByState (state, issues);
 
-        if(state != null){
-            issues = filterByState (state, issues);
+        if (keyword != null) issues = issues.stream().filter(x -> x.getLabels().contains(keyword)
+                || (x.getDescription() != null && x.getDescription().contains(keyword))
+                || x.getTitle().contains(keyword)).toList();
+
+        if (longerFirst != null){
+            if (longerFirst) {
+                issues.sort(Comparator.comparing(x -> getLenghtDescription(x.getDescription())));
+                //reversed
+            } else {
+                issues.sort(Comparator.comparing(x -> getLenghtDescription(x.getDescription())));
+            }
         }
 
         return issues;
+    }
+
+    public Integer getLenghtDescription (String description){
+        if (description == null) {
+            return 0;
+        } else {
+            return description.length();
+        }
     }
 
     @GetMapping("/{id}")

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,15 +24,20 @@ public class CommitController {
 
     @GetMapping
     public List<Commit> findCommits
-            (@RequestParam(value = "email", required = false) String email)
+            (@RequestParam(value = "email", required = false) String email,
+             @RequestParam(value = "committername", required = false) String committerName,
+             @RequestParam(value = "beforedate", required = false) String beforeDate)
             throws CommitNotFoundException {
 
-        List<Commit> commits;
-        if (email != null) {
-            commits = repository.findByauthorEmail(email);
-        } else {
-            commits = repository.findAll();
-        }
+        List<Commit> commits = repository.findAll();;
+
+        if (email != null) commits = commits.stream()
+                .filter(x -> repository.findByauthorEmail(email).contains(x)).toList();
+        if (committerName != null) commits = commits.stream()
+                .filter(x -> x.getCommitterName().replace(" ","").equals(committerName)).toList();
+        if (beforeDate != null) commits = commits.stream()
+                .filter(x -> ZonedDateTime.parse(x.getCommittedDate()).toLocalDate().isBefore(ZonedDateTime.parse(beforeDate).toLocalDate())).toList();
+
         return commits;
     }
 

@@ -3,6 +3,7 @@ package aiss.gitminer.controller;
 import aiss.gitminer.exceptions.ProjectNotFoundException;
 import aiss.gitminer.exceptions.UserNotFoundException;
 import aiss.gitminer.model.User;
+import aiss.gitminer.repository.CommentRepository;
 import aiss.gitminer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,18 +12,34 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 @RestController
-@RequestMapping("gitminer/users")
+@RequestMapping("gitminer")
 public class UserController {
     @Autowired
     UserRepository repository;
+    @Autowired
+    CommentRepository commentRepository;
 
-    @GetMapping
-    public List<User> findALl(){ return repository.findAll();}
+    @GetMapping("/users")
+    public List<User> findALl(@RequestParam(value = "activefirst",required = false) Boolean activeFirst){
+        List<User> users = repository.findAll();
+        if (activeFirst != null) {
+            if (!activeFirst) {
+                users.sort(Comparator.comparing(x ->
+                        commentRepository.findAll().stream()
+                                .filter(y -> y.getAuthor().getUsername().equals(x.getUsername()))
+                                .toList().size()));
+            } else {
 
-    @GetMapping("/{id}")
+            }
+        }
+        return users;
+    }
+
+    @GetMapping("/users/{id}")
     public User findOne(@PathVariable String id)
         throws UserNotFoundException {
 
@@ -35,8 +52,21 @@ public class UserController {
         return user.get();
     }
 
+    @GetMapping("user/{name}")
+    public User findOnebyName(@PathVariable String name)
+            throws UserNotFoundException {
+
+        Optional<User> user = repository.findByusername(name);
+
+        if(!user.isPresent()){
+            throw new UserNotFoundException();
+        }
+
+        return user.get();
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping("/users")
     public User create(@Valid @RequestBody User user){
         User _user = repository
                 .save(new User(user.getId(),
@@ -47,7 +77,7 @@ public class UserController {
         return _user;
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}")
+    @PutMapping("/users/{id}")
     public void update(@Valid @RequestBody User updated, @PathVariable String id) {
         Optional<User> userData = repository.findById(id);
         User _user = userData.get();
@@ -60,7 +90,7 @@ public class UserController {
         repository.save(_user);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/users/{id}")
     public void delete(@PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
