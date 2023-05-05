@@ -4,6 +4,9 @@ import aiss.gitminer.exceptions.ProjectNotFoundException;
 import aiss.gitminer.model.Project;
 import aiss.gitminer.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +23,14 @@ public class ProjectController {
 
     @GetMapping
     public List<Project> findAll(@RequestParam(value = "title",required = false) String title,
-                                 @RequestParam(value = "complexLast",required = false) Boolean complexLast) {
-        List<Project> projects = repository.findAll();
+                                 @RequestParam(value = "complexLast",required = false) Boolean complexLast,
+                                 @RequestParam(defaultValue = "10")int page,
+                                 @RequestParam(defaultValue = "10")int size) {
+
+        Page<Project> pageProjects;
+        Pageable paging = PageRequest.of(page,size);
+        pageProjects = repository.findAll(paging);
+        List<Project> projects = pageProjects.getContent();
         if(title != null) projects = projects.stream().filter(x -> x.getName().equals(title)).toList();
         if(complexLast != null){
             if(complexLast){

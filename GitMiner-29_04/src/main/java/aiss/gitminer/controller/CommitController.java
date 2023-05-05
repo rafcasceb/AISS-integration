@@ -5,6 +5,9 @@ import aiss.gitminer.exceptions.CommitNotFoundException;
 import aiss.gitminer.model.Commit;
 import aiss.gitminer.repository.CommitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +29,16 @@ public class CommitController {
     public List<Commit> findCommits
             (@RequestParam(value = "email", required = false) String email,
              @RequestParam(value = "committername", required = false) String committerName,
-             @RequestParam(value = "beforedate", required = false) String beforeDate)
+             @RequestParam(value = "beforedate", required = false) String beforeDate,
+             @RequestParam(defaultValue="0")int page,
+             @RequestParam(defaultValue = "10")int size)
             throws CommitNotFoundException {
 
-        List<Commit> commits = repository.findAll();;
+
+        Page<Commit> pageCommit;
+        Pageable paging = PageRequest.of(page,size);
+        pageCommit = repository.findAll(paging);
+        List<Commit> commits = pageCommit.getContent();
 
         if (email != null) commits = commits.stream()
                 .filter(x -> repository.findByauthorEmail(email).contains(x)).toList();

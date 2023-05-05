@@ -6,6 +6,9 @@ import aiss.gitminer.model.Comment;
 import aiss.gitminer.model.Issue;
 import aiss.gitminer.repository.IssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +29,17 @@ public class IssueController {
             (@RequestParam(value = "authorId",required = false) String id,
              @RequestParam(value = "state",required = false)String state,
              @RequestParam(value = "keyword",required = false) String keyword,
-             @RequestParam(value = "longerFirst", required = false) Boolean longerFirst)
+             @RequestParam(value = "longerFirst", required = false) Boolean longerFirst,
+             @RequestParam(defaultValue = "0")int page,
+             @RequestParam(defaultValue = "10")int size)
             throws IssueNotFoundException {
 
-        List<Issue> issues = new ArrayList<>(repository.findAll());
+
+        Page<Issue> pageIssue;
+        Pageable paging = PageRequest.of(page,size);
+        pageIssue = repository.findAll(paging);
+        List<Issue> issues = pageIssue.getContent();
+
 
         if(id != null) issues = filterByAuthorId (id, issues);
         if(state != null) issues = filterByState (state, issues);

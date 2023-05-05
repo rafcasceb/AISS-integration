@@ -4,6 +4,9 @@ import aiss.gitminer.exceptions.CommentNotFoundException;
 import aiss.gitminer.model.Comment;
 import aiss.gitminer.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +28,15 @@ public class CommentController {
     @GetMapping
     public List<Comment> findAll(@RequestParam(value = "word", required = false) String word,
                                  @RequestParam(value = "author", required = false) String author,
-                                 @RequestParam(value = "recentFirst", required = false) Boolean recentFirst) {
+                                 @RequestParam(value = "recentFirst", required = false) Boolean recentFirst,
+                                 @RequestParam(defaultValue = "0")int page,
+                                 @RequestParam(defaultValue = "10")int size) {
 
-        List<Comment> comments = repository.findAll();
+
+        Page<Comment> pageComments;
+        Pageable paging = PageRequest.of(page,size);
+        pageComments = repository.findAll(paging);
+        List<Comment> comments = pageComments.getContent();
 
         if (word != null) comments = comments.stream()
                 .filter(x -> x.getBody().contains(word)).toList();

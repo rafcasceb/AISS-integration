@@ -6,6 +6,9 @@ import aiss.gitminer.model.User;
 import aiss.gitminer.repository.CommentRepository;
 import aiss.gitminer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
@@ -24,8 +27,14 @@ public class UserController {
     CommentRepository commentRepository;
 
     @GetMapping("/users")
-    public List<User> findALl(@RequestParam(value = "activefirst",required = false) Boolean activeFirst){
-        List<User> users = repository.findAll();
+    public List<User> findALl(@RequestParam(value = "activefirst",required = false) Boolean activeFirst,
+                              @RequestParam(defaultValue = "0")int page,
+                              @RequestParam(defaultValue = "10")int size){
+
+        Page<User> pageUsers;
+        Pageable paging = PageRequest.of(page,size);
+        pageUsers = repository.findAll(paging);
+        List<User> users = pageUsers.getContent();
         if (activeFirst != null) {
             if (!activeFirst) {
                 users.sort(Comparator.comparing(x ->
