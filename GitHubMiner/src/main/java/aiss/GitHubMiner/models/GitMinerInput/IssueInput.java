@@ -2,21 +2,13 @@ package aiss.GitHubMiner.models.GitMinerInput;
 
 import aiss.GitHubMiner.models.commentsModels.Comment;
 import aiss.GitHubMiner.models.issuesModels.Issue;
-import aiss.GitHubMiner.services.CommentService;
-import aiss.GitHubMiner.services.UserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Entity
-@Table(name = "Issue")
 public class IssueInput {
 
-    @Id
     @JsonProperty("id")
     private String id;
 
@@ -25,7 +17,6 @@ public class IssueInput {
     @JsonProperty("title")
     private String title;
     @JsonProperty("description")
-    @Column(columnDefinition="TEXT")
     private String description;
     @JsonProperty("state")
     private String state;
@@ -37,16 +28,10 @@ public class IssueInput {
     @JsonProperty("closed_at")
     private String closedAt;
     @JsonProperty("labels")
-    @ElementCollection
     private List<String> labels;
     @JsonProperty("author")
-    //@NotEmpty(message = "The author of the issue cannot be empty")
-    @JoinColumn(name = "author_id",referencedColumnName = "id")
-    @OneToOne(cascade=CascadeType.ALL)
     private UserInput author;
     @JsonProperty("assignee")
-    @JoinColumn(name = "assignee_id",referencedColumnName = "id")
-    @OneToOne(cascade=CascadeType.ALL)
     private UserInput assignee;
     @JsonProperty("upvotes")
     private Integer upvotes;
@@ -57,8 +42,6 @@ public class IssueInput {
     private String webUrl;
 
     @JsonProperty("comments")
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "issueId")
     private List<CommentInput> comments;
 
     public String getId() {
@@ -182,9 +165,6 @@ public class IssueInput {
     }
 
 
-
-    @Autowired
-    CommentService service;
 
     public IssueInput(){}
 

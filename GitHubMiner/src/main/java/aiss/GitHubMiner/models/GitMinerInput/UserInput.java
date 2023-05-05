@@ -2,26 +2,15 @@ package aiss.GitHubMiner.models.GitMinerInput;
 
 import aiss.GitHubMiner.models.issuesModels.Assignee;
 import aiss.GitHubMiner.models.usersModels.User;
-import aiss.GitHubMiner.services.UserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 
-@Entity
-@Table(name = "GMUser")     // Watch out: User is a reserved keyword in H2
 public class UserInput {
 
-    @Id
     @JsonProperty("id")
     private String id;
 
     @JsonProperty("username")
-    @NotEmpty(message = "The username cannot be empty")
     private String username;
 
     @JsonProperty("name")
@@ -75,9 +64,6 @@ public class UserInput {
     }
 
 
-
-    @Autowired
-    UserService service;
 
     public UserInput(){}
 

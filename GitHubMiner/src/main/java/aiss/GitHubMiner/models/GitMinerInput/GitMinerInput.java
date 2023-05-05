@@ -4,19 +4,14 @@ import aiss.GitHubMiner.models.commentsModels.Comment;
 import aiss.GitHubMiner.models.commitsModels.Commit;
 import aiss.GitHubMiner.models.issuesModels.Issue;
 import aiss.GitHubMiner.models.projectsModels.Project;
-import aiss.GitHubMiner.services.CommitService;
-import aiss.GitHubMiner.services.IssueService;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Id;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GitMinerInput {
 
-    @Id
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("name")
@@ -49,11 +44,6 @@ public class GitMinerInput {
 
     public void setIssues(List<IssueInput> issues) {this.issues = issues;}
 
-
-    @Autowired
-    IssueService issueService;
-    @Autowired
-    CommitService commitService;
 
     public GitMinerInput(){}
 
