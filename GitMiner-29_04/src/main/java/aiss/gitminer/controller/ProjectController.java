@@ -3,6 +3,11 @@ package aiss.gitminer.controller;
 import aiss.gitminer.exceptions.ProjectNotFoundException;
 import aiss.gitminer.model.Project;
 import aiss.gitminer.repository.ProjectRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +25,16 @@ import java.util.Optional;
 public class ProjectController {
     @Autowired
     ProjectRepository repository;
+
+    @Operation(
+            summary = "Retrieve all Projects",
+            description = "Get all projects in the database",
+            tags = { "projects", "get" })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Projects list",
+                    content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Not found", content = { @Content(schema = @Schema())})
+            })
 
     @GetMapping
     public List<Project> findAll(@RequestParam(value = "title",required = false) String title,
@@ -42,6 +57,16 @@ public class ProjectController {
         return projects;
     }
 
+    @Operation(
+            summary = "Retrieve one project",
+            description = "Get one project of the database",
+            tags = { "projects", "get" })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Project",
+                    content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Not found", content = { @Content(schema = @Schema())})
+    })
+
     @GetMapping("/{id}")
     public Project findOne(@PathVariable String id)
             throws ProjectNotFoundException {
@@ -53,6 +78,14 @@ public class ProjectController {
         }
         return project.get();
     }
+
+    @Operation(
+            summary = "Create a project",
+            description = "Create a project with all the data",
+            tags = { "project", "post" })
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Project", content={})
+            })
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -66,6 +99,15 @@ public class ProjectController {
                         project.getIssues()));
         return _project;
     }
+
+    @Operation(
+            summary = "Update a project",
+            description = "Update a project with all the data",
+            tags = { "projects", "put" })
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Project", content = {}),
+            @ApiResponse(responseCode = "500", description = "Not found", content = { @Content(schema = @Schema())})
+            })
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
@@ -82,6 +124,14 @@ public class ProjectController {
         _project.setIssues(updated.getIssues());
         repository.save(_project);
     }
+
+    @Operation(
+            summary = "Delete a project",
+            description = "Delete a project with all the data",
+            tags = { "project", "delete" })
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Project", content={})
+    })
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
