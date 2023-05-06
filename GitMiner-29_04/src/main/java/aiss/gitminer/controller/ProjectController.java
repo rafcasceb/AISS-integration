@@ -33,7 +33,7 @@ public class ProjectController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Projects list",
                     content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "400", description = "Not found", content = { @Content(schema = @Schema())})
+            @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
             })
 
     @GetMapping
@@ -64,7 +64,7 @@ public class ProjectController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Project",
                     content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "400", description = "Not found", content = { @Content(schema = @Schema())})
+            @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
     })
 
     @GetMapping("/{id}")
@@ -106,7 +106,7 @@ public class ProjectController {
             tags = { "projects", "put" })
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Project", content = {}),
-            @ApiResponse(responseCode = "500", description = "Not found", content = { @Content(schema = @Schema())})
+            @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
             })
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -130,7 +130,7 @@ public class ProjectController {
             description = "Delete a project with all the data",
             tags = { "project", "delete" })
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Project", content={})
+            @ApiResponse(responseCode = "204", description = "Project", content={})
     })
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
