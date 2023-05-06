@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping
+@RequestMapping("githubminer/projects")
 public class GitMinerInputController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class GitMinerInputController {
 
 
     @GetMapping("/{owner}")
-    public List<GitMinerInput> findAll(@RequestParam() String owner,
+    public List<GitMinerInput> findAll(@PathVariable() String owner,
                                        @RequestParam(required = false) Integer maxPages,
                                        @RequestParam(required = false) Integer sinceCommits,
                                        @RequestParam(required = false) Integer sinceIssues) {
@@ -64,8 +64,8 @@ public class GitMinerInputController {
 
 
     @GetMapping("/{owner}/{repoName}")
-    public GitMinerInput findOne(@RequestParam() String owner,
-                                 @RequestParam() String repoName,
+    public GitMinerInput findOne(@PathVariable() String owner,
+                                 @PathVariable() String repoName,
                                  @RequestParam(required = false) Integer maxPages,
                                  @RequestParam(required = false) Integer sinceCommits,
                                  @RequestParam(required = false) Integer sinceIssues) {
@@ -87,7 +87,9 @@ public class GitMinerInputController {
             issue.getUser().setName(fullUserIssue.getName());
 
             User fullAssigneeIssue = UserService.getUser(issue.getUser().getLogin());
-            issue.getAssignee().setName(fullAssigneeIssue.getName());
+            if(issue.getAssignee()!= null){
+                issue.getAssignee().setName(fullAssigneeIssue.getName());
+            }
         }
 
         return new GitMinerInput(project, commits, issues, issuesComments);
@@ -96,7 +98,7 @@ public class GitMinerInputController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{owner}")
-    public List<GitMinerInput> createAll(@RequestParam() String owner,
+    public List<GitMinerInput> createAll(@PathVariable() String owner,
                                          @RequestParam(required = false) Integer maxPages,
                                          @RequestParam(required = false) Integer sinceCommits,
                                          @RequestParam(required = false) Integer sinceIssues) {
@@ -119,8 +121,8 @@ public class GitMinerInputController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{owner}/{repoName}")
-    public GitMinerInput createOne(@RequestParam() String owner,
-                                    @RequestParam() String repoName,
+    public GitMinerInput createOne(@PathVariable() String owner,
+                                    @PathVariable() String repoName,
                                     @RequestParam(required = false) Integer maxPages,
                                     @RequestParam(required = false) Integer sinceCommits,
                                     @RequestParam(required = false) Integer sinceIssues){
