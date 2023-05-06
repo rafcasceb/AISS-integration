@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name="Comment", description = "Comment management APi")
+@Tag(name="Commit", description = "Commit management APi")
 @RestController
 @RequestMapping("/gitminer/commits")
 

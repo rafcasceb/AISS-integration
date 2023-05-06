@@ -2,8 +2,10 @@ package aiss.gitminer.controller;
 
 import aiss.gitminer.exceptions.CommentNotFoundException;
 import aiss.gitminer.model.Comment;
+import aiss.gitminer.model.Issue;
 import aiss.gitminer.repository.CommentRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,16 +40,16 @@ public class CommentController {
             description = "Get all comments in the database",
             tags = { "comments", "get" })
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Comments list",
-                    content = {@Content(schema = @Schema(implementation = Comment.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "400", description = "Not found", content = { @Content(schema = @Schema()) })
+            @ApiResponse(responseCode = "200",content = {@Content(schema = @Schema(implementation = Comment.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
     })
     @GetMapping
-    public List<Comment> findAll(@RequestParam(value = "word", required = false) String word,
-                                 @RequestParam(value = "author", required = false) String author,
-                                 @RequestParam(value = "recentFirst", required = false) Boolean recentFirst,
-                                 @RequestParam(defaultValue = "0")int page,
-                                 @RequestParam(defaultValue = "10")int size) {
+    public List<Comment> findAll(
+            @Parameter(description = "words of the comment") @RequestParam(value = "word", required = false) String word,
+            @Parameter(description = "author of the comment") @RequestParam(value = "author", required = false) String author,
+            @Parameter(description = "boolean that marks if the most recent comments appear before") @RequestParam(value = "recentFirst", required = false) Boolean recentFirst,
+            @Parameter(description = "page of the comment") @RequestParam(defaultValue = "0")int page,
+            @Parameter(description = "size of the comment") @RequestParam(defaultValue = "10")int size) {
 
 
         Page<Comment> pageComments;
@@ -80,12 +82,11 @@ public class CommentController {
             description = "Get one comments with the id",
             tags = { "comments", "get" })
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Comment",
-                    content = {@Content(schema = @Schema(implementation = Comment.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "400", description = "Not found", content = { @Content(schema = @Schema()) })
+            @ApiResponse(responseCode = "200",content = {@Content(schema = @Schema(implementation = Comment.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}")
-    public Comment findOne(@PathVariable String id) throws  CommentNotFoundException {
+    public Comment findOne(@Parameter(description = "Id of the comment to find")@PathVariable String id) throws  CommentNotFoundException {
         Optional<Comment> comment = repository.findById(id);
         if(!comment.isPresent()){
             throw new CommentNotFoundException();
@@ -99,11 +100,12 @@ public class CommentController {
             description = "Create a comment with all the data",
             tags = { "comments", "post" })
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Comment", content = {})
+            @ApiResponse(responseCode = "201",content = {@Content(schema = @Schema(implementation = Comment.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",content = {@Content(schema = @Schema())})
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Comment create (@Valid @RequestBody Comment comment){
+    public Comment create (@Valid @Parameter(description = "The comment to post") @RequestBody Comment comment){
         Comment _comment = repository
                 .save(new Comment(comment.getId(),
                         comment.getBody(),
@@ -118,12 +120,13 @@ public class CommentController {
             description = "Update a comment with all the data",
             tags = { "comments", "put" })
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Comment", content = {}),
-            @ApiResponse(responseCode = "500", description = "Not found", content = { @Content(schema = @Schema()) })
+            @ApiResponse(responseCode = "204",content = {@Content(schema = @Schema(implementation = Comment.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400",content = {@Content(schema = @Schema())})
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@Valid @RequestBody Comment updated,@PathVariable String id)
+    public void update(@Valid @Parameter(description = "Comment data to be updated") @RequestBody Comment updated,@PathVariable String id)
         throws CommentNotFoundException {
 
         Optional<Comment> commentData = repository.findById(id);
@@ -143,11 +146,13 @@ public class CommentController {
             description = "Delete a comment with the id",
             tags = { "comments", "delete" })
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Comment", content = {})
+            @ApiResponse(responseCode = "204",content = {@Content(schema = @Schema(implementation = Comment.class),mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400",content = {@Content(schema = @Schema())})
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete (@PathVariable String id){
+    public void delete (@Parameter(description="id of the comment to be deleted") @PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
         }
