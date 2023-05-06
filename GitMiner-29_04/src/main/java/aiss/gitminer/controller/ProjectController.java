@@ -4,10 +4,12 @@ import aiss.gitminer.exceptions.ProjectNotFoundException;
 import aiss.gitminer.model.Project;
 import aiss.gitminer.repository.ProjectRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name="Project", description="Project management API")
 @RestController
 @RequestMapping("/gitminer/projects")
 public class ProjectController {
@@ -37,7 +40,7 @@ public class ProjectController {
             })
 
     @GetMapping
-    public List<Project> findAll(@RequestParam(value = "title",required = false) String title,
+    public List<Project> findAll(@Valid @RequestBody Project AllProjects, @RequestParam(value = "title",required = false) String title,
                                  @RequestParam(value = "complexLast",required = false) Boolean complexLast,
                                  @RequestParam(defaultValue = "10")int page,
                                  @RequestParam(defaultValue = "10")int size) {
@@ -68,7 +71,7 @@ public class ProjectController {
     })
 
     @GetMapping("/{id}")
-    public Project findOne(@PathVariable String id)
+    public Project findOne(@Parameter(description="id of the project") @PathVariable String id)
             throws ProjectNotFoundException {
 
         Optional<Project> project = repository.findById(id);
@@ -111,7 +114,7 @@ public class ProjectController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@Valid @RequestBody Project updated,@PathVariable String id)
+    public void update(@Valid @RequestBody Project updated, @Parameter(description="id of the project to be updated") @PathVariable String id)
         throws ProjectNotFoundException {
 
         Optional<Project> projectData = repository.findById(id);
@@ -135,7 +138,7 @@ public class ProjectController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable String id){
+    public void delete(@Parameter(description="id of the project to be deleted") @PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
         }
