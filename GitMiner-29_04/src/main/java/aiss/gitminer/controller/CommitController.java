@@ -122,7 +122,7 @@ public class CommitController {
         repository.save(_commit);
     }
 
-    @Operation(summary = "Update a commit", description = "Put operation to update the commit with the given id", tags = {"commits","put", "id"})
+    @Operation(summary = "Update a commit", description = "Put operation to update the commit with the given id", tags = {"commits","delete", "id"})
     @ApiResponses({@ApiResponse(responseCode = "204", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())})})
