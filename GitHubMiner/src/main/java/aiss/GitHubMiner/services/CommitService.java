@@ -44,12 +44,6 @@ public class CommitService {
     }
 
     public List<Commit> getCommits(String owner, String repo, String token){
-        /*
-        Commit[] commitArray = restTemplate
-                .getForObject(baseUri + owner + "/" + repo + "/commits", Commit[].class);
-
-        return  Arrays.stream(commitArray).toList();
-        */
         HttpEntity<?> header = Auth.buildHeader(token);
         ResponseEntity<Commit[]> commitArray = getRequest(baseUri + owner + "/" + repo + "/commits", header);
         return Arrays.stream(commitArray.getBody()).toList();

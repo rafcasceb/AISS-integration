@@ -24,7 +24,6 @@ public class CommentService {
 
 
     public Comment getCommentsId (String owner, String repo, String id, String token){
-        //return restTemplate.getForObject(baseUri + owner + "/" + repo + "/issues/comments/" + id, Comment.class);
         HttpEntity<?> request = Auth.buildHeader(token);
         ResponseEntity<Comment> response = restTemplate.exchange(
                 baseUri + owner + "/" + repo + "/issues/comments/" + id,
@@ -35,11 +34,6 @@ public class CommentService {
     }
 
     public List<Comment> getAllComments (String owner, String repo, String token){
-        /*
-        Comment[] commentsArray = restTemplate
-                .getForObject(baseUri + owner + "/" + repo + "/issues/comments", Comment[].class);
-        return Arrays.stream(commentsArray).toList();
-        */
         HttpEntity<?> request = Auth.buildHeader(token);
         ResponseEntity<Comment[]> commentsArray = restTemplate.exchange(
                 baseUri + owner + "/" + repo + "/issues/comments",

@@ -20,10 +20,6 @@ public class UserService {
     String baseUri = "https://api.github.com/users/";
 
     public User getUser(String userName, String token){
-        /*
-        User user = restTemplate.getForObject(baseUri + userName, User.class);
-        return user;
-        */
         HttpEntity<?> header = Auth.buildHeader(token);
         ResponseEntity<User> response = restTemplate.exchange(
                 baseUri + userName,

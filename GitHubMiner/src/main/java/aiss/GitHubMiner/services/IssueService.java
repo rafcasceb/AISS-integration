@@ -41,11 +41,6 @@ public class IssueService {
     }
 
     public List<Issue> getIssues (String owner,String repo, String token){
-        /*
-        Issue[] issuesArray = restTemplate
-                .getForObject(baseUri + owner + "/" + repo + "/issues", Issue[].class);
-        return Arrays.stream(issuesArray).toList();
-        */
         HttpEntity<?> header = Auth.buildHeader(token);
         ResponseEntity<Issue[]> issuesArray = getRequest(baseUri + owner + "/" + repo + "/issues", header);
         return Arrays.stream(issuesArray.getBody()).toList();

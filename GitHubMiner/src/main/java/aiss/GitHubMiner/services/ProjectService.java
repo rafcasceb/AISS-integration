@@ -28,12 +28,6 @@ public class ProjectService {
     // owner = organization
 
     public Project getProject (String owner, String repoName, String token){
-        /*
-        Project project = restTemplate.getForObject(
-                baseUriOne + owner + "/" + repoName,
-                Project.class);
-        return project;
-        */
         HttpEntity<?> header = Auth.buildHeader(token);
         ResponseEntity<Project> response = restTemplate.exchange(
                 baseUriOne + owner + "/" + repoName,
@@ -44,12 +38,6 @@ public class ProjectService {
     }
 
     public List<Project> getAllProjects(String org, String token){
-        /*
-        Project[] projects = restTemplate.getForObject(
-                baseUriAll + org + "/repos",
-                Project[].class);
-        return Arrays.stream(projects).toList();
-        */
         HttpEntity<?> header = Auth.buildHeader(token);
         ResponseEntity<Project[]> response = restTemplate.exchange(
                 baseUriAll + org + "/repos",
