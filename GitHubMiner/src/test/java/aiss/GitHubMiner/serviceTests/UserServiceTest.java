@@ -13,12 +13,15 @@ class UserServiceTest {
 
     @Autowired
     UserService service;
-    
+
+    String token = "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";
+
+
     @Test
     @DisplayName("Get user")
     void getUsers(){
-        User user = service.getUser("rafcasceb");
-        assertEquals(user.getName().trim(), "Rafael Castillo Cebolla", "Name doesn't match.");
+        User user = service.getUser("octocat", token);
+        assertEquals(user.getName().trim(), "The Octocat", "Name doesn't match.");
     }
 
 }
