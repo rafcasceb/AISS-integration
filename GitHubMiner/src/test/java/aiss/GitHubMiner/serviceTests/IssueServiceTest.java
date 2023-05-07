@@ -47,8 +47,7 @@ public class IssueServiceTest {
         LocalDateTime limit = LocalDateTime.now().minusDays(sinceIssues);
 
         for(Issue i: issues){
-            LocalDateTime issueDate = LocalDateTime
-                    .parse(i.getCreatedAt(),formatter);
+            LocalDateTime issueDate = LocalDateTime.parse(i.getUpdatedAt(),formatter);
 
             assertEquals(issueDate.isAfter(limit), true, "Issue date before limit");
 
