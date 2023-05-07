@@ -52,7 +52,9 @@ public class CommentService {
     public List<Comment> getCommentsPagination(String owner, String repo, Integer maxPages, String token){
         // Manual pagination
         int commentsByPage = 20;
-        return getAllComments(owner,repo,token).stream().limit(maxPages * commentsByPage).collect(Collectors.toList());
+        int limit = 1;
+        if (maxPages!=null) limit = maxPages;
+        return getAllComments(owner,repo,token).stream().limit(limit * commentsByPage).collect(Collectors.toList());
     }
 
 }

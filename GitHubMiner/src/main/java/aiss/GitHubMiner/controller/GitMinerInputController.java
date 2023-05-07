@@ -127,20 +127,21 @@ public class GitMinerInputController {
                                    @RequestParam(required = false) Integer sinceCommits,
                                    @RequestParam(required = false) Integer sinceIssues){
 
+        System.out.println("posting 1");
+
         GitMinerInput project = findOne(owner, repoName, maxPages, sinceCommits, sinceIssues);
+
+        System.out.println(project.getName());
+        System.out.println(project.getUrl());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String url = "http://localhost:8080/gitminer/projects";
 
         HttpEntity<GitMinerInput> request = new HttpEntity<GitMinerInput>(project, headers);
-        try {
+
             GitMinerInput createdProject = RestTemplate.postForObject(url, request, GitMinerInput.class);
             return createdProject;
-        } catch (HttpStatusCodeException e) { // Manejar el error en la solicitud POST
-            throw new ResponseStatusException(
-                    HttpStatus.valueOf(e.getRawStatusCode()),
-                    "Error en la solicitud POST al endpoint de GitMiner ", e);
-        }
+
     }
 }

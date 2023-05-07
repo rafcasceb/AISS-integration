@@ -16,7 +16,7 @@ public class GitMinerInput {
     private Integer id;
     @JsonProperty("name")
     private String name;
-    @JsonProperty("url")
+    @JsonProperty("web_url")
     private String url;
     @JsonProperty("commits")
     private List<CommitInput> commits;
