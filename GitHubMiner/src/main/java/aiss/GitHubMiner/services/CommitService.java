@@ -2,6 +2,7 @@ package aiss.GitHubMiner.services;
 
 import aiss.GitHubMiner.auxiliary.Auth;
 import aiss.GitHubMiner.auxiliary.Pagination;
+import aiss.GitHubMiner.models.commentsModels.Comment;
 import aiss.GitHubMiner.models.commitsModels.Commit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -31,14 +32,8 @@ public class CommitService {
     // repo == project.getName()
     // owner = project.getOwner().getLogin() = organization
 
-    public List<Commit> getCommits(String owner, String repo){
-        Commit[] commitArray = restTemplate
-                .getForObject(baseUri + owner + "/" + repo + "/commits", Commit[].class);
 
-        return  Arrays.stream(commitArray).toList();
-    }
-
-    private ResponseEntity<Commit[]> getRequest (String uri, HttpEntity<?> header ){
+    private ResponseEntity<Commit[]> getRequest (String uri, HttpEntity<?> header){
         ResponseEntity<Commit[]> response = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
@@ -47,6 +42,19 @@ public class CommitService {
         );
         return response;
     }
+
+    public List<Commit> getCommits(String owner, String repo, String token){
+        /*
+        Commit[] commitArray = restTemplate
+                .getForObject(baseUri + owner + "/" + repo + "/commits", Commit[].class);
+
+        return  Arrays.stream(commitArray).toList();
+        */
+        HttpEntity<?> header = Auth.buildHeader(token);
+        ResponseEntity<Commit[]> commitArray = getRequest(baseUri + owner + "/" + repo + "/commits", header);
+        return Arrays.stream(commitArray.getBody()).toList();
+    }
+
 
     public List<Commit> getCommitsPagination(String owner, String repo, String token, Integer sinceCommits, Integer maxPages) {
 

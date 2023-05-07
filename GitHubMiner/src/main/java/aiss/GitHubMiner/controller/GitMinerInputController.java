@@ -52,7 +52,7 @@ public class GitMinerInputController {
                                        @RequestParam(required = false) Integer sinceIssues) {
 
         List<GitMinerInput> res = new ArrayList<>();
-        List<Project> projects = ProjectService.getProjectsPagination(owner, maxPages);
+        List<Project> projects = ProjectService.getProjectsPagination(owner, maxPages, token);
 
         for (Project p: projects) {
             String repoName = p.getName();
@@ -70,24 +70,24 @@ public class GitMinerInputController {
                                  @RequestParam(required = false) Integer sinceCommits,
                                  @RequestParam(required = false) Integer sinceIssues) {
 
-        Project project = ProjectService.getProject(owner, repoName);
+        Project project = ProjectService.getProject(owner, repoName, token);
         List<Commit> commits = CommitService.getCommitsPagination(owner, repoName, token, sinceCommits, maxPages);
         List<Issue> issues = IssueService.getIssuesPagination(owner, repoName, token, sinceIssues ,maxPages);
 
         Map<String,List<Comment>> issuesComments = new HashMap<>();
         for (Issue issue: issues){
-            List<Comment> commentsOfIssue = CommentService.getCommentsPagination(owner, repoName, maxPages);
+            List<Comment> commentsOfIssue = CommentService.getCommentsPagination(owner, repoName, maxPages, token);
             for (Comment comment: commentsOfIssue){
-                User fullUserComment = UserService.getUser(comment.getUser().getLogin());
+                User fullUserComment = UserService.getUser(comment.getUser().getLogin(), token);
                 comment.getUser().setName(fullUserComment.getName());
             }
             issuesComments.put(issue.getId(), commentsOfIssue);
 
-            User fullUserIssue = UserService.getUser(issue.getUser().getLogin());
+            User fullUserIssue = UserService.getUser(issue.getUser().getLogin(), token);
             issue.getUser().setName(fullUserIssue.getName());
 
-            User fullAssigneeIssue = UserService.getUser(issue.getUser().getLogin());
             if(issue.getAssignee()!= null){
+                User fullAssigneeIssue = UserService.getUser(issue.getAssignee().getLogin(), token);
                 issue.getAssignee().setName(fullAssigneeIssue.getName());
             }
         }
@@ -107,7 +107,7 @@ public class GitMinerInputController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String url = "http://localhost:8080/api/projects";
+        String url = "http://localhost:8080/gitminer/projects";
 
         for(GitMinerInput g: projects){
             HttpEntity<GitMinerInput> request = new HttpEntity<GitMinerInput>(g, headers);
@@ -122,16 +122,16 @@ public class GitMinerInputController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{owner}/{repoName}")
     public GitMinerInput createOne(@PathVariable() String owner,
-                                    @PathVariable() String repoName,
-                                    @RequestParam(required = false) Integer maxPages,
-                                    @RequestParam(required = false) Integer sinceCommits,
-                                    @RequestParam(required = false) Integer sinceIssues){
+                                   @PathVariable() String repoName,
+                                   @RequestParam(required = false) Integer maxPages,
+                                   @RequestParam(required = false) Integer sinceCommits,
+                                   @RequestParam(required = false) Integer sinceIssues){
 
         GitMinerInput project = findOne(owner, repoName, maxPages, sinceCommits, sinceIssues);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String url = "http://localhost:8080/api/projects";
+        String url = "http://localhost:8080/gitminer/projects";
 
         HttpEntity<GitMinerInput> request = new HttpEntity<GitMinerInput>(project, headers);
         try {

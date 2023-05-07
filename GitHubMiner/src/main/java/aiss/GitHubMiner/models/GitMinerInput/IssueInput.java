@@ -176,12 +176,12 @@ public class IssueInput {
         this.state = issue.getState();
         this.createdAt = issue.getCreatedAt();
         this.updatedAt = issue.getCreatedAt();
-        this.closedAt = issue.getClosedAt().toString();
+        this.closedAt = issue.getClosedAt() == null? null : issue.getClosedAt().toString();
         this.labels = issue.getLabels().stream().map(l -> l.getId()).collect(Collectors.toList());
         this.upvotes = null;  // Doesn't exist
         this.downvotes = null;  // Doesn't exist
         this.author = new UserInput(issue.getUser());
-        this.assignee = new UserInput(issue.getAssignee());
+        this.assignee = issue.getAssignee() == null ? null : new UserInput(issue.getAssignee());
         this.comments = comments.stream().map(c -> new CommentInput(c)).collect(Collectors.toList());
     }
 

@@ -29,13 +29,6 @@ public class IssueService {
 
     String baseUri = "https://api.github.com/repos/";
 
-    public List<Issue> getIssues (String owner,String repo){
-
-        Issue[] issuesArray = restTemplate
-                .getForObject(baseUri + owner + "/" + repo + "/issues", Issue[].class);
-        return Arrays.stream(issuesArray).toList();
-
-    }
 
     private ResponseEntity<Issue[]> getRequest (String uri, HttpEntity<?> header ){
         ResponseEntity<Issue[]> response = restTemplate.exchange(
@@ -46,6 +39,19 @@ public class IssueService {
         );
         return response;
     }
+
+    public List<Issue> getIssues (String owner,String repo, String token){
+        /*
+        Issue[] issuesArray = restTemplate
+                .getForObject(baseUri + owner + "/" + repo + "/issues", Issue[].class);
+        return Arrays.stream(issuesArray).toList();
+        */
+        HttpEntity<?> header = Auth.buildHeader(token);
+        ResponseEntity<Issue[]> issuesArray = getRequest(baseUri + owner + "/" + repo + "/issues", header);
+        return Arrays.stream(issuesArray.getBody()).toList();
+    }
+
+
 
     public List<Issue> getIssuesPagination (String owner,String repo, String token, Integer sinceIssues, Integer maxPages){
 
