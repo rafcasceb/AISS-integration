@@ -13,9 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,32 +43,10 @@ public class GitMinerInputController {
     // repository = project.getName()
 
 
-    @GetMapping("/{owner}")
-    public List<GitMinerInput> findAll(@PathVariable() String owner,
-                                       @RequestParam(required = false) Integer maxPages,
-                                       @RequestParam(required = false) Integer sinceCommits,
-                                       @RequestParam(required = false) Integer sinceIssues) {
+    private GitMinerInput aux(Project project, Integer maxPages, Integer sinceCommits, Integer sinceIssues) {
+        String owner = project.getOwner().getLogin();
+        String repoName = project.getName();
 
-        List<GitMinerInput> res = new ArrayList<>();
-        List<Project> projects = ProjectService.getProjectsPagination(owner, maxPages, token);
-
-        for (Project p: projects) {
-            String repoName = p.getName();
-            res.add(findOne(owner, repoName, maxPages, sinceCommits, sinceIssues));
-        }
-
-        return res;
-    }
-
-
-    @GetMapping("/{owner}/{repoName}")
-    public GitMinerInput findOne(@PathVariable() String owner,
-                                 @PathVariable() String repoName,
-                                 @RequestParam(required = false) Integer maxPages,
-                                 @RequestParam(required = false) Integer sinceCommits,
-                                 @RequestParam(required = false) Integer sinceIssues) {
-
-        Project project = ProjectService.getProject(owner, repoName, token);
         List<Commit> commits = CommitService.getCommitsPagination(owner, repoName, token, sinceCommits, maxPages);
         List<Issue> issues = IssueService.getIssuesPagination(owner, repoName, token, sinceIssues ,maxPages);
 
@@ -93,6 +69,35 @@ public class GitMinerInputController {
         }
 
         return new GitMinerInput(project, commits, issues, issuesComments);
+    }
+
+
+    @GetMapping("/{owner}")
+    public List<GitMinerInput> findAll(@PathVariable() String owner,
+                                       @RequestParam(required = false) Integer maxPages,
+                                       @RequestParam(required = false) Integer sinceCommits,
+                                       @RequestParam(required = false) Integer sinceIssues) {
+
+        List<GitMinerInput> res = new ArrayList<>();
+        List<Project> projects = ProjectService.getProjectsPagination(owner, maxPages, token);
+
+        for (Project p: projects) {
+            res.add(aux(p, maxPages, sinceCommits, sinceIssues));
+        }
+
+        return res;
+    }
+
+
+    @GetMapping("/{owner}/{repoName}")
+    public GitMinerInput findOne(@PathVariable() String owner,
+                                 @PathVariable() String repoName,
+                                 @RequestParam(required = false) Integer maxPages,
+                                 @RequestParam(required = false) Integer sinceCommits,
+                                 @RequestParam(required = false) Integer sinceIssues) {
+
+        Project project = ProjectService.getProject(owner, repoName, token);
+        return aux(project, maxPages, sinceCommits, sinceIssues);
     }
 
 
