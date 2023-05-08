@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/gitminer/comments")
 public class CommentController {
+
     @Autowired
     CommentRepository repository;
 
@@ -50,7 +51,6 @@ public class CommentController {
             @Parameter(description = "boolean that marks if the most recent comments appear before") @RequestParam(value = "recentFirst", required = false) Boolean recentFirst,
             @Parameter(description = "page of the comment") @RequestParam(defaultValue = "0")int page,
             @Parameter(description = "size of the comment") @RequestParam(defaultValue = "10")int size) {
-
 
         Page<Comment> pageComments;
         Pageable paging = PageRequest.of(page,size);
@@ -86,7 +86,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}")
-    public Comment findOne(@Parameter(description = "Id of the comment to find")@PathVariable String id) throws  CommentNotFoundException {
+    public Comment findOne(@Parameter(description = "Id of the comment to find")@PathVariable String id) throws CommentNotFoundException {
         Optional<Comment> comment = repository.findById(id);
         if(!comment.isPresent()){
             throw new CommentNotFoundException();
@@ -126,7 +126,8 @@ public class CommentController {
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@Valid @Parameter(description = "Comment data to be updated") @RequestBody Comment updated,@PathVariable String id)
+    public void update(@Valid @Parameter(description = "Updated data for comment") @RequestBody Comment updated,
+                       @Parameter(description = "Id of comment to be updated") @PathVariable String id)
         throws CommentNotFoundException {
 
         Optional<Comment> commentData = repository.findById(id);
@@ -152,7 +153,7 @@ public class CommentController {
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete (@Parameter(description="id of the comment to be deleted") @PathVariable String id){
+    public void delete (@Parameter(description="Id of the comment to be deleted") @PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
         }

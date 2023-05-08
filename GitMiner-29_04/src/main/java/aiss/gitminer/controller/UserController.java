@@ -29,6 +29,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("gitminer")
 public class UserController {
+
     @Autowired
     UserRepository repository;
     @Autowired
@@ -118,13 +119,12 @@ public class UserController {
             description = "Create a user.",
             tags = {"users", "user", "post", "create"})
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "201", content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = User.class))})
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema(implementation = User.class))})
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/users")
-    public User create(@Parameter(description = "Full User to be created.") @Valid @RequestBody User user){
+    public User create(@Parameter(description = "User to be created.") @Valid @RequestBody User user){
         User _user = repository
                 .save(new User(user.getId(),
                         user.getUsername(),
@@ -142,14 +142,14 @@ public class UserController {
             description = "Updates a user.",
             tags = {"users", "user", "put", "update"})
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "204", content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = User.class))})
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/users/{id}")
-    public void update(@Parameter(description = "Full User to be updated.") @Valid @RequestBody User updated,
-                       @Parameter(description = "ID of user to be updated.") @PathVariable String id) {
+    public void update(@Parameter(description = "Updated data for user.") @Valid @RequestBody User updated,
+                       @Parameter(description = "Id of user to be updated.") @PathVariable String id) {
         Optional<User> userData = repository.findById(id);
         User _user = userData.get();
         _user.setId(updated.getId());
@@ -162,18 +162,19 @@ public class UserController {
     }
 
 
+
     @Operation(
             summary = "Deletes a user.",
             description = "Deletes a user.",
             tags = {"users", "user", "destroy", "delete"})
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "204", content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = User.class))})
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/users/{id}")
-    public void delete(@Parameter(description = "ID of user to deleted.") @PathVariable String id){
+    public void delete(@Parameter(description = "Id of user to deleted.") @PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
         }

@@ -30,13 +30,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/gitminer/issues")
 public class IssueController {
+
     @Autowired
     IssueRepository repository;
+
+
     @Operation(
             summary = "Retrieve a list of issues",
             description = "Get a list of issues",
-            tags = { "issues", "get"}
-    )
+            tags = { "issues", "get"})
     @ApiResponses({
             @ApiResponse(responseCode = "200",content = {@Content(schema = @Schema(implementation = Issue.class),mediaType = "application/json")}),
             @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
@@ -50,7 +52,6 @@ public class IssueController {
              @Parameter(description = "Page retrieved")@RequestParam(defaultValue = "0")int page,
              @Parameter(description = "Number of elements retrieved")@RequestParam(defaultValue = "10")int size)
             throws IssueNotFoundException {
-
 
         Page<Issue> pageIssue;
         Pageable paging = PageRequest.of(page,size);
@@ -77,13 +78,15 @@ public class IssueController {
         return issues;
     }
 
-    public Integer getLenghtDescription (String description){
+    private Integer getLenghtDescription (String description){
         if (description == null) {
             return 0;
         } else {
             return description.length();
         }
     }
+
+
     @Operation(
             summary = "Retrieve an issue",
             description = "Get an issue",
@@ -102,6 +105,8 @@ public class IssueController {
         }
         return issue.get();
     }
+
+
     @Operation(
             summary = "Retrieve comments of an issue",
             description = "Get comments of an issue",
@@ -112,7 +117,6 @@ public class IssueController {
             @ApiResponse(responseCode = "404",content = {@Content(schema = @Schema())})
     })
     @GetMapping("/{id}/comments")
-
     public List<Comment> findCommentsOfOne(@Parameter(description = "Id of the issue")@PathVariable String id)
             throws IssueNotFoundException {
 
@@ -123,6 +127,8 @@ public class IssueController {
 
         return issue.get().getComments();
     }
+
+
     @Operation(
             summary = "Create an issue",
             description = "Create an issue whose data is passed in the body of the request",
@@ -154,6 +160,8 @@ public class IssueController {
                         ));
         return _issue;
     }
+
+
     @Operation(
             summary = "Update an issue",
             description = "Update an existing issue with data passed on the body of the request",
@@ -166,7 +174,8 @@ public class IssueController {
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@Parameter(description = "Issue information to be updated")@Valid @RequestBody Issue updated,@Parameter(description = "Id of the issue to update")@PathVariable String id)
+    public void update(@Parameter(description = "Issue information to be updated")@Valid @RequestBody Issue updated,
+                       @Parameter(description = "Id of the issue to update")@PathVariable String id)
             throws IssueNotFoundException{
 
         Optional<Issue> issueData = repository.findById(id);
@@ -188,8 +197,9 @@ public class IssueController {
         _issue.setComments(updated.getComments());
 
         repository.save(_issue);
-
     }
+
+
     @Operation(
             summary = "Delete an issue",
             description = "Delete an existing issue by the id specified",

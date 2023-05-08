@@ -26,24 +26,26 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/gitminer/projects")
 public class ProjectController {
+
     @Autowired
     ProjectRepository repository;
+
 
     @Operation(
             summary = "Retrieve all Projects",
             description = "Get all projects in the database",
             tags = { "projects", "get" })
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Projects list",
+            @ApiResponse(responseCode = "200", description = "Projects found",
                     content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
             })
-
     @GetMapping
-    public List<Project> findAll(@Valid @RequestBody Project AllProjects, @RequestParam(value = "title",required = false) String title,
+    public List<Project> findAll(@Valid @RequestBody Project AllProjects,
+                                 @RequestParam(value = "title",required = false) String title,
                                  @RequestParam(value = "complexLast",required = false) Boolean complexLast,
-                                 @RequestParam(defaultValue = "10")int page,
-                                 @RequestParam(defaultValue = "10")int size) {
+                                 @Parameter(description = "page number") @RequestParam(defaultValue = "10") int page,
+                                 @Parameter(description = "number of elements per page") @RequestParam(defaultValue = "10") int size) {
 
         Page<Project> pageProjects;
         Pageable paging = PageRequest.of(page,size);
@@ -60,18 +62,18 @@ public class ProjectController {
         return projects;
     }
 
+
     @Operation(
             summary = "Retrieve one project",
             description = "Get one project of the database",
             tags = { "projects", "get" })
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Project",
+            @ApiResponse(responseCode = "200", description = "Project found",
                     content = {@Content(schema = @Schema(implementation = Project.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
     })
-
     @GetMapping("/{id}")
-    public Project findOne(@Parameter(description="id of the project") @PathVariable String id)
+    public Project findOne(@Parameter(description="Id of the project to find") @PathVariable String id)
             throws ProjectNotFoundException {
 
         Optional<Project> project = repository.findById(id);
@@ -82,17 +84,18 @@ public class ProjectController {
         return project.get();
     }
 
+
     @Operation(
             summary = "Create a project",
             description = "Create a project with all the data",
             tags = { "project", "post" })
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Project", content={})
-            })
-
+            @ApiResponse(responseCode = "201", description = "Project created and returned", content={}),
+            @ApiResponse(responseCode = "400",content = {@Content(schema = @Schema())})
+    })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Project project (@Valid @RequestBody Project project){
+    public Project project (@Valid @Parameter(description = "Project to be created") @RequestBody Project project){
         // System.out.println(project);
         Project _project = repository
                 .save(new Project(project.getId(),
@@ -103,18 +106,20 @@ public class ProjectController {
         return _project;
     }
 
+
     @Operation(
             summary = "Update a project",
             description = "Update a project with all the data",
             tags = { "projects", "put" })
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Project", content = {}),
+            @ApiResponse(responseCode = "204", description = "Project updated", content = {}),
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
             })
-
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@Valid @RequestBody Project updated, @Parameter(description="id of the project to be updated") @PathVariable String id)
+    public void update(@Valid @Parameter(description = "Updated data for project") @RequestBody Project updated,
+                       @Parameter(description="Id of the project to be updated") @PathVariable String id)
         throws ProjectNotFoundException {
 
         Optional<Project> projectData = repository.findById(id);
@@ -128,17 +133,19 @@ public class ProjectController {
         repository.save(_project);
     }
 
+
     @Operation(
             summary = "Delete a project",
             description = "Delete a project with all the data",
             tags = { "project", "delete" })
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Project", content={})
+            @ApiResponse(responseCode = "204", description = "Project deleted", content={}),
+            @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
     })
-
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@Parameter(description="id of the project to be deleted") @PathVariable String id){
+    public void delete(@Parameter(description="Id of the project to be deleted") @PathVariable String id){
         if(repository.existsById(id)){
             repository.deleteById(id);
         }
