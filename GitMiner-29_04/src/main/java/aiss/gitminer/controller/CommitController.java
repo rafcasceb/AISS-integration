@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,19 +43,42 @@ public class CommitController {
              @Parameter(description = "committer of the comments to find") @RequestParam(value = "committername", required = false) String committerName,
              @Parameter(description = "limit date of the comments to be find") @RequestParam(value = "beforedate", required = false) String beforeDate,
              @Parameter(description = "page number") @RequestParam(defaultValue="0") int page,
+             @RequestParam(value = "order", required = false) String order,
              @Parameter(description = "number of elements per page") @RequestParam(defaultValue = "10") int size)
     {
         Page<Commit> pageCommit;
-        Pageable paging = PageRequest.of(page,size);
-        pageCommit = repository.findAll(paging);
-        List<Commit> commits = pageCommit.getContent();
+        Pageable paging;
+        List<Commit> commits;
+        if (order != null){
+            if(order.startsWith("-"))
+                paging = PageRequest.of(page,size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        }
+        else{
+            paging = PageRequest.of(page, size);
+        }
 
-        if (email != null) commits = commits.stream()
-                .filter(x -> repository.findByauthorEmail(email).contains(x)).toList();
-        if (committerName != null) commits = commits.stream()
-                .filter(x -> x.getCommitterName().replace(" ","").equals(committerName)).toList();
-        if (beforeDate != null) commits = commits.stream()
-                .filter(x -> ZonedDateTime.parse(x.getCommittedDate()).toLocalDate().isBefore(ZonedDateTime.parse(beforeDate).toLocalDate())).toList();
+        if (email != null) {
+            pageCommit = repository.findAll(paging);
+            commits = pageCommit.getContent().stream()
+                    .filter(x -> repository.findByauthorEmail(email).contains(x)).toList();
+        }
+        else if (committerName != null) {
+            pageCommit = repository.findAll(paging);
+            commits = pageCommit.getContent();
+            commits = commits.stream()
+                    .filter(x -> x.getCommitterName().replace(" ", "").equals(committerName)).toList();
+        }
+        else if (beforeDate != null){
+            pageCommit = repository.findAll(paging);
+            commits = pageCommit.getContent();
+            commits = commits.stream()
+                    .filter(x -> ZonedDateTime.parse(x.getCommittedDate()).toLocalDate().isBefore(ZonedDateTime.parse(beforeDate).toLocalDate())).toList();
+        }else{
+            pageCommit = repository.findAll(paging);
+            commits = pageCommit.getContent();
+        }
 
         return commits;
     }

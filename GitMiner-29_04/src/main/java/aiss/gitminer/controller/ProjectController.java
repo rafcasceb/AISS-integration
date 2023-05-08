@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,23 +42,48 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Not found", content = { @Content(schema = @Schema())})
             })
     @GetMapping
-    public List<Project> findAll(@Valid @RequestBody Project AllProjects,
+    public List<Project> findAll(
                                  @RequestParam(value = "title",required = false) String title,
                                  @RequestParam(value = "complexLast",required = false) Boolean complexLast,
-                                 @Parameter(description = "page number") @RequestParam(defaultValue = "10") int page,
+                                 @Parameter(description = "page number") @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(value = "order", required = false) String order,
                                  @Parameter(description = "number of elements per page") @RequestParam(defaultValue = "10") int size) {
 
         Page<Project> pageProjects;
-        Pageable paging = PageRequest.of(page,size);
-        pageProjects = repository.findAll(paging);
-        List<Project> projects = pageProjects.getContent();
-        if(title != null) projects = projects.stream().filter(x -> x.getName().equals(title)).toList();
-        if(complexLast != null){
+        Pageable paging;
+        List<Project> projects;
+
+        if (order != null){
+            if(order.startsWith("-"))
+                paging = PageRequest.of(page,size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        }
+        else{
+            paging = PageRequest.of(page, size);
+        }
+
+        if(title != null){
+            pageProjects = repository.findAll(paging);
+            projects = pageProjects.getContent();
+            projects = projects.stream().filter(x -> x.getName().equals(title)).toList();
+        }
+        else if(complexLast != null){
             if(complexLast){
+                pageProjects = repository.findAll(paging);
+                projects = pageProjects.getContent();
                 projects.sort(Comparator.comparing(x -> x.getCommits().size()
                         + x.getIssues().size() +
                         x.getIssues().stream().mapToInt(y -> y.getComments().size()).sum()));
             }
+            else{
+                pageProjects = repository.findAll(paging);
+                projects = pageProjects.getContent();
+            }
+        }
+        else{
+            pageProjects = repository.findAll(paging);
+            projects = pageProjects.getContent();
         }
         return projects;
     }

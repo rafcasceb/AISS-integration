@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -50,30 +51,48 @@ public class IssueController {
              @Parameter(description = "Keyword to filter")@RequestParam(value = "keyword",required = false) String keyword,
              @Parameter(description = "Order by long first")@RequestParam(value = "longerFirst", required = false) Boolean longerFirst,
              @Parameter(description = "Page retrieved")@RequestParam(defaultValue = "0")int page,
+             @RequestParam(value = "order", required = false) String order,
              @Parameter(description = "Number of elements retrieved")@RequestParam(defaultValue = "10")int size)
             throws IssueNotFoundException {
 
+
+        Pageable paging;
         Page<Issue> pageIssue;
-        Pageable paging = PageRequest.of(page,size);
-        pageIssue = repository.findAll(paging);
-        List<Issue> issues = pageIssue.getContent();
-
-
-        if(id != null) issues = filterByAuthorId (id, issues);
-        if(state != null) issues = filterByState (state, issues);
-
-        if (keyword != null) issues = issues.stream().filter(x -> x.getLabels().contains(keyword)
-                || (x.getDescription() != null && x.getDescription().contains(keyword))
-                || x.getTitle().contains(keyword)).toList();
-
-        if (longerFirst != null){
-            if (longerFirst) {
-                issues.sort(Comparator.comparing(x -> getLenghtDescription(x.getDescription())));
-                //reversed
-            } else {
-                issues.sort(Comparator.comparing(x -> getLenghtDescription(x.getDescription())));
-            }
+        List<Issue> issues;
+        if (order != null){
+            if(order.startsWith("-"))
+                paging = PageRequest.of(page,size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
         }
+        else{
+            paging = PageRequest.of(page, size);
+        }
+
+
+        if(id != null){
+            pageIssue = repository.findAll(paging);
+            issues = pageIssue.getContent();
+            issues = filterByAuthorId (id, issues);
+        }
+        else if(state != null) {
+            pageIssue = repository.findAll(paging);
+            issues = pageIssue.getContent();
+            issues = filterByState (state, issues);
+        }
+        else if (keyword != null){
+            pageIssue = repository.findAll(paging);
+            issues = pageIssue.getContent();
+            issues = issues.stream().filter(x -> x.getLabels().contains(keyword)
+                    || (x.getDescription() != null && x.getDescription().contains(keyword))
+                    || x.getTitle().contains(keyword)).toList();
+        }else{
+            pageIssue = repository.findAll(paging);
+            issues = pageIssue.getContent();
+        }
+
+
+
 
         return issues;
     }

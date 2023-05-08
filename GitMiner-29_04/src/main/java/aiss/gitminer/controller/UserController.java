@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
@@ -47,21 +48,38 @@ public class UserController {
     @GetMapping("/users")
     public List<User> findALl(@Parameter(description = "Sorts by activity.") @RequestParam(value = "activefirst",required = false) Boolean activeFirst,
                               @Parameter(description = "Page to retrieve.") @RequestParam(defaultValue = "0")int page,
+                              @RequestParam(value = "order", required = false) String order,
                               @Parameter(description = "Size of the content of the page.") @RequestParam(defaultValue = "10")int size){
 
         Page<User> pageUsers;
-        Pageable paging = PageRequest.of(page,size);
-        pageUsers = repository.findAll(paging);
-        List<User> users = pageUsers.getContent();
+        Pageable paging;
+        List<User> users;
+        if (order != null){
+            if(order.startsWith("-"))
+                paging = PageRequest.of(page,size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        }
+        else{
+            paging = PageRequest.of(page, size);
+        }
         if (activeFirst != null) {
             if (!activeFirst) {
+                pageUsers = repository.findAll(paging);
+                users = pageUsers.getContent();
                 users.sort(Comparator.comparing(x ->
                         commentRepository.findAll().stream()
                                 .filter(y -> y.getAuthor().getUsername().equals(x.getUsername()))
                                 .toList().size()));
             } else {
+                pageUsers = repository.findAll(paging);
+                users = pageUsers.getContent();
+
 
             }
+        }else{
+            pageUsers = repository.findAll(paging);
+            users = pageUsers.getContent();
         }
         return users;
     }

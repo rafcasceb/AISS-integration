@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -48,27 +49,38 @@ public class CommentController {
     public List<Comment> findAll(
             @Parameter(description = "words of the comment") @RequestParam(value = "word", required = false) String word,
             @Parameter(description = "author of the comment") @RequestParam(value = "author", required = false) String author,
-            @Parameter(description = "boolean that marks if the most recent comments appear before") @RequestParam(value = "recentFirst", required = false) Boolean recentFirst,
+            @Parameter(description = "boolean that marks if the most recent comments appear before")
+            @RequestParam(value = "order", required = false) String order,
             @Parameter(description = "page of the comment") @RequestParam(defaultValue = "0")int page,
             @Parameter(description = "size of the comment") @RequestParam(defaultValue = "10")int size) {
 
         Page<Comment> pageComments;
-        Pageable paging = PageRequest.of(page,size);
-        pageComments = repository.findAll(paging);
+        Pageable paging;
+
+
+
+
+        if (order != null){
+            if(order.startsWith("-"))
+                paging = PageRequest.of(page,size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        }
+        else{
+            paging = PageRequest.of(page, size);
+        }
+
+        if (author != null) {
+            pageComments = repository.findByAuthor(author,paging);
+        }else{
+            pageComments = repository.findAll(paging);
+        }
+
+
         List<Comment> comments = pageComments.getContent();
-
-        if (word != null) comments = comments.stream()
-                .filter(x -> x.getBody().contains(word)).toList();
-        if (author != null) comments = comments.stream()
-                .filter(x -> x.getAuthor().getUsername().equals(author)).toList();
-
-        if (recentFirst != null){
-            if (recentFirst) {
-                comments.sort(Comparator.comparing(x -> ZonedDateTime.parse(x.getUpdatedAt()).toLocalDate()));
-                //reversed
-            } else {
-                comments.sort(Comparator.comparing(x -> ZonedDateTime.parse(x.getUpdatedAt()).toLocalDate()));
-            }
+        if (word != null) {
+            comments = comments.stream()
+                    .filter(x -> x.getBody().contains(word)).toList();
         }
 
 
