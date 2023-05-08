@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class ProjectController {
 
         Page<Project> pageProjects;
         Pageable paging;
-        List<Project> projects;
+        List<Project> projects = new ArrayList<>();
 
         if (order != null){
             if(order.startsWith("-"))
@@ -64,17 +65,13 @@ public class ProjectController {
         }
 
         if(title != null){
-            pageProjects = repository.findAll(paging);
-            projects = pageProjects.getContent();
-            projects = projects.stream().filter(x -> x.getName().equals(title)).toList();
+            projects = repository.findByname(title,paging).getContent();
         }
         else if(complexLast != null){
             if(complexLast){
-                pageProjects = repository.findAll(paging);
-                projects = pageProjects.getContent();
-                projects.sort(Comparator.comparing(x -> x.getCommits().size()
-                        + x.getIssues().size() +
-                        x.getIssues().stream().mapToInt(y -> y.getComments().size()).sum()));
+                if (projects.isEmpty()) projects = repository.findAll(paging).getContent();
+                projects = projects.stream().sorted(Comparator.comparing( x -> sizeOfList(x.getCommits())
+                                + sizeOfList(x.getIssues()))).toList();
             }
             else{
                 pageProjects = repository.findAll(paging);
@@ -86,6 +83,15 @@ public class ProjectController {
             projects = pageProjects.getContent();
         }
         return projects;
+    }
+
+    public int sizeOfList(List<?> ls){
+        if (ls == null){
+            return 0;
+        }
+        else {
+            return ls.size();
+        }
     }
 
 

@@ -5,6 +5,7 @@ import aiss.gitminer.exceptions.IssueNotFoundException;
 import aiss.gitminer.model.Comment;
 import aiss.gitminer.model.Issue;
 import aiss.gitminer.repository.IssueRepository;
+import aiss.gitminer.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,6 +35,8 @@ public class IssueController {
 
     @Autowired
     IssueRepository repository;
+    @Autowired
+    UserRepository userRepository;
 
 
     @Operation(
@@ -46,10 +49,9 @@ public class IssueController {
     })
     @GetMapping
     public List<Issue> findIssues
-            (@Parameter(description = "Id of the author")@RequestParam(value = "authorId",required = false) String id,
+            (@Parameter(description = "User name of the author")@RequestParam(value = "authorId",required = false) String username,
              @Parameter(description = "State of the issue")@RequestParam(value = "state",required = false)String state,
              @Parameter(description = "Keyword to filter")@RequestParam(value = "keyword",required = false) String keyword,
-             @Parameter(description = "Order by long first")@RequestParam(value = "longerFirst", required = false) Boolean longerFirst,
              @Parameter(description = "Page retrieved")@RequestParam(defaultValue = "0")int page,
              @RequestParam(value = "order", required = false) String order,
              @Parameter(description = "Number of elements retrieved")@RequestParam(defaultValue = "10")int size)
@@ -58,7 +60,7 @@ public class IssueController {
 
         Pageable paging;
         Page<Issue> pageIssue;
-        List<Issue> issues;
+        List<Issue> issues = new ArrayList<>();
         if (order != null){
             if(order.startsWith("-"))
                 paging = PageRequest.of(page,size, Sort.by(order.substring(1)).descending());
@@ -70,19 +72,16 @@ public class IssueController {
         }
 
 
-        if(id != null){
-            pageIssue = repository.findAll(paging);
+        if(username != null){
+            pageIssue = repository.findByAuthor(userRepository.findByusername(username).get(),paging);
             issues = pageIssue.getContent();
-            issues = filterByAuthorId (id, issues);
         }
         else if(state != null) {
-            pageIssue = repository.findAll(paging);
+            pageIssue = repository.findByState(state,paging);
             issues = pageIssue.getContent();
-            issues = filterByState (state, issues);
         }
         else if (keyword != null){
-            pageIssue = repository.findAll(paging);
-            issues = pageIssue.getContent();
+            if (issues.isEmpty()) issues = repository.findAll(paging).getContent();
             issues = issues.stream().filter(x -> x.getLabels().contains(keyword)
                     || (x.getDescription() != null && x.getDescription().contains(keyword))
                     || x.getTitle().contains(keyword)).toList();
@@ -237,29 +236,4 @@ public class IssueController {
         }
     }
 
-    List<Issue> filterByAuthorId (String id, List<Issue> Issues){
-
-        List<Issue> newIssues = new ArrayList<>(Issues);
-
-        for(Issue issue : Issues){
-            if (!issue.getAuthor().getId().equals(id)) {
-                System.out.println(issue.getAuthor().getId() + " " + id + "-------------------------------------------------------------------------------------------------------------------------------------");
-                newIssues.remove(issue);
-            }
-        }
-        return  newIssues;
-    }
-
-    List<Issue> filterByState (String state, List<Issue> Issues){
-
-        List<Issue> issueByState = repository.findByState(state);
-        List<Issue> newIssues = new ArrayList<>(Issues);
-
-        for(Issue issue : Issues){
-            if (!issueByState.contains(issue)) {
-                newIssues.remove(issue);
-            }
-        }
-        return  newIssues;
-    }
 }

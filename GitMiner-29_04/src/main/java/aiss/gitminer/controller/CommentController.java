@@ -4,6 +4,7 @@ import aiss.gitminer.exceptions.CommentNotFoundException;
 import aiss.gitminer.model.Comment;
 import aiss.gitminer.model.Issue;
 import aiss.gitminer.repository.CommentRepository;
+import aiss.gitminer.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,6 +36,8 @@ public class CommentController {
 
     @Autowired
     CommentRepository repository;
+    @Autowired
+    UserRepository userRepository;
 
 
     @Operation(
@@ -52,13 +55,10 @@ public class CommentController {
             @Parameter(description = "boolean that marks if the most recent comments appear before")
             @RequestParam(value = "order", required = false) String order,
             @Parameter(description = "page of the comment") @RequestParam(defaultValue = "0")int page,
-            @Parameter(description = "size of the comment") @RequestParam(defaultValue = "10")int size) {
+            @Parameter(description = "number of comments to retrieve") @RequestParam(defaultValue = "10")int size) {
 
         Page<Comment> pageComments;
         Pageable paging;
-
-
-
 
         if (order != null){
             if(order.startsWith("-"))
@@ -66,18 +66,19 @@ public class CommentController {
             else
                 paging = PageRequest.of(page, size, Sort.by(order).ascending());
         }
-        else{
+        else {
             paging = PageRequest.of(page, size);
         }
 
         if (author != null) {
-            pageComments = repository.findByAuthor(author,paging);
+            pageComments = repository.findByAuthor(userRepository.findByusername(author).get(),paging);
         }else{
             pageComments = repository.findAll(paging);
         }
 
 
         List<Comment> comments = pageComments.getContent();
+
         if (word != null) {
             comments = comments.stream()
                     .filter(x -> x.getBody().contains(word)).toList();

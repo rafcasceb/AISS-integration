@@ -46,8 +46,9 @@ public class UserController {
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = User.class))})
     })
     @GetMapping("/users")
-    public List<User> findALl(@Parameter(description = "Sorts by activity.") @RequestParam(value = "activefirst",required = false) Boolean activeFirst,
+    public List<User> findALl(
                               @Parameter(description = "Page to retrieve.") @RequestParam(defaultValue = "0")int page,
+                              @Parameter(description = "Order by activity.") @RequestParam(value = "activeusers", required = false) boolean activeUsers,
                               @RequestParam(value = "order", required = false) String order,
                               @Parameter(description = "Size of the content of the page.") @RequestParam(defaultValue = "10")int size){
 
@@ -63,24 +64,13 @@ public class UserController {
         else{
             paging = PageRequest.of(page, size);
         }
-        if (activeFirst != null) {
-            if (!activeFirst) {
-                pageUsers = repository.findAll(paging);
-                users = pageUsers.getContent();
-                users.sort(Comparator.comparing(x ->
-                        commentRepository.findAll().stream()
-                                .filter(y -> y.getAuthor().getUsername().equals(x.getUsername()))
-                                .toList().size()));
-            } else {
-                pageUsers = repository.findAll(paging);
-                users = pageUsers.getContent();
+        users = repository.findAll(paging).getContent();
 
-
-            }
-        }else{
-            pageUsers = repository.findAll(paging);
-            users = pageUsers.getContent();
+        if(activeUsers == true){
+            users = users.stream()
+                    .sorted(Comparator.comparing(x -> - commentRepository.findByAuthor(x,paging).getContent().size())).toList();
         }
+
         return users;
     }
 

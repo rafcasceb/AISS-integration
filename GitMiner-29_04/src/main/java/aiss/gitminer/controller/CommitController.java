@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +49,8 @@ public class CommitController {
     {
         Page<Commit> pageCommit;
         Pageable paging;
-        List<Commit> commits;
+        List<Commit> commits = new ArrayList<>();
+
         if (order != null){
             if(order.startsWith("-"))
                 paging = PageRequest.of(page,size, Sort.by(order.substring(1)).descending());
@@ -60,19 +62,13 @@ public class CommitController {
         }
 
         if (email != null) {
-            pageCommit = repository.findAll(paging);
-            commits = pageCommit.getContent().stream()
-                    .filter(x -> repository.findByauthorEmail(email).contains(x)).toList();
+            commits = repository.findByauthorEmail(email,paging).getContent();
         }
         else if (committerName != null) {
-            pageCommit = repository.findAll(paging);
-            commits = pageCommit.getContent();
-            commits = commits.stream()
-                    .filter(x -> x.getCommitterName().replace(" ", "").equals(committerName)).toList();
+            commits = repository.findBycommitterName(committerName,paging).getContent();
         }
         else if (beforeDate != null){
-            pageCommit = repository.findAll(paging);
-            commits = pageCommit.getContent();
+            if (commits.isEmpty()) commits = repository.findAll(paging).getContent();
             commits = commits.stream()
                     .filter(x -> ZonedDateTime.parse(x.getCommittedDate()).toLocalDate().isBefore(ZonedDateTime.parse(beforeDate).toLocalDate())).toList();
         }else{
