@@ -1,9 +1,7 @@
 package aiss.GitLabMiner.Controller;
 
-import aiss.GitLabMiner.Models.Comments.Author;
 import aiss.GitLabMiner.Models.Comments.Comment;
 import aiss.GitLabMiner.Models.Commits.Commit;
-import aiss.GitLabMiner.Models.GitMinerInput.CommitInput;
 import aiss.GitLabMiner.Models.GitMinerInput.GitMinerInput;
 import aiss.GitLabMiner.Models.Issues.Issue;
 import aiss.GitLabMiner.Models.Projects.Project;
@@ -19,7 +17,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,33 +43,10 @@ public class GitMinerInputController {
 
     String token = "glpat-EWrMxiW1vhazpsMAsc4A";
 
-    @GetMapping()
-    public List<GitMinerInput> findAll(@RequestParam(required = false) Integer maxPages,
-                                       @RequestParam(required = false) Integer sinceCommits,
-                                       @RequestParam(required = false) Integer sinceIssues) {
 
-        List<GitMinerInput> res = new ArrayList<>();
-        List<Project> projects = ProjectService.getProjectsPagination(maxPages, token);
-
-        for (Project p : projects) {
-            String id = p.getId().toString();
-            res.add(findOne(id,maxPages,sinceCommits,sinceIssues));
-        }
-
-        return res;
-    }
-
-    @GetMapping("/{id}")
-    public GitMinerInput findOne(@PathVariable String id,
-                           @RequestParam(required = false) Integer sinceCommits,
-                           @RequestParam(required = false) Integer sinceIssues,
-                           @RequestParam(required = false) Integer maxPages) {
-
-        Project project = ProjectService.getProject(id, token);
-        System.out.println(project + " " + project.getId());
-        List<Commit> commits = CommitService.getCommitsPagination(id, token, sinceCommits, maxPages);
-        List<Issue> issues = IssueService.getIssuesPagination(id, token, sinceIssues, maxPages);
-        System.out.println(issues);
+    private GitMinerInput aux(Project project, Integer maxPages, Integer sinceCommits, Integer sinceIssues) {
+        List<Commit> commits = CommitService.getCommitsPagination(project.getId().toString(), token, sinceCommits, maxPages);
+        List<Issue> issues = IssueService.getIssuesPagination(project.getId().toString(), token, sinceIssues, maxPages);
 
         Map<Integer,List<Comment>> issueComments = new HashMap<>();
 
@@ -93,6 +67,33 @@ public class GitMinerInputController {
         return new GitMinerInput(project, commits, issues, issueComments);
     }
 
+
+    @GetMapping()
+    public List<GitMinerInput> findAll(@RequestParam(required = false) Integer maxPages,
+                                       @RequestParam(required = false) Integer sinceCommits,
+                                       @RequestParam(required = false) Integer sinceIssues) {
+
+        List<GitMinerInput> res = new ArrayList<>();
+        List<Project> projects = ProjectService.getProjectsPagination(maxPages, token);
+
+        for (Project p : projects) {
+            String id = p.getId().toString();
+            res.add(aux(p,maxPages,sinceCommits,sinceIssues));
+        }
+
+        return res;
+    }
+
+    @GetMapping("/{id}")
+    public GitMinerInput findOne(@PathVariable String id,
+                           @RequestParam(required = false) Integer sinceCommits,
+                           @RequestParam(required = false) Integer sinceIssues,
+                           @RequestParam(required = false) Integer maxPages) {
+
+        Project project = ProjectService.getProject(id, token);
+        return aux(project,maxPages,sinceCommits,sinceIssues);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
     public List<GitMinerInput> createAll (@RequestParam(required = false) Integer sinceCommits,
@@ -106,8 +107,7 @@ public class GitMinerInputController {
         String url = "http://localhost:8080/gitminer/projects";
 
         for(GitMinerInput g : projects){
-            HttpEntity<GitMinerInput> request =
-                    new HttpEntity<GitMinerInput>(g, headers);
+            HttpEntity<GitMinerInput> request = new HttpEntity<GitMinerInput>(g, headers);
             restTemplate.postForObject(url, request, GitMinerInput.class);
         }
 
