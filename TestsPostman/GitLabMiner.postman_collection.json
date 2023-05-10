@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "bb8d164f-50e5-40d8-b85c-bcb5943625ef",
+		"name": "GitLabMiner",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26168153"
+	},
+	"item": [
+		{
+			"name": "Fetch Project",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/gitlabminer/projects/17960074?maxPages=2&sinceCommits=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"gitlabminer",
+						"projects",
+						"17960074"
+					],
+					"query": [
+						{
+							"key": "maxPages",
+							"value": "2"
+						},
+						{
+							"key": "sinceCommits",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post GitLab project to GitMiner",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/gitlabminer/projects/17960074?maxPages=2&sinceCommits=10&sinceIssues=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"gitlabminer",
+						"projects",
+						"17960074"
+					],
+					"query": [
+						{
+							"key": "maxPages",
+							"value": "2"
+						},
+						{
+							"key": "sinceCommits",
+							"value": "10"
+						},
+						{
+							"key": "sinceIssues",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/gitlabminer/projects?maxPages=1&sinceCommits=1&sinceIssues=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"gitlabminer",
+						"projects"
+					],
+					"query": [
+						{
+							"key": "maxPages",
+							"value": "1"
+						},
+						{
+							"key": "sinceCommits",
+							"value": "1"
+						},
+						{
+							"key": "sinceIssues",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post all",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/gitlabminer/projects?maxPages=1&sinceCommits=1&sinceIssues=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"gitlabminer",
+						"projects"
+					],
+					"query": [
+						{
+							"key": "maxPages",
+							"value": "1"
+						},
+						{
+							"key": "sinceCommits",
+							"value": "1"
+						},
+						{
+							"key": "sinceIssues",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
