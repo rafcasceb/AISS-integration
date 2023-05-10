@@ -38,6 +38,7 @@ public class GitMinerInputController {
     RestTemplate RestTemplate;
 
     String token = "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";
+    //String token = "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";
 
     // owner = organization = project.getOwner().getLogin()
     // repository = project.getName()
