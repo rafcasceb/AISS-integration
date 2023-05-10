@@ -62,8 +62,6 @@ public class ProjectController {
         }
         else if(complexLast != null && complexLast==true) {
             paging = PageRequest.of(page, size, Sort.by(Sort.Order.asc("commits"), Sort.Order.asc("issues")));
-            //if (projects.isEmpty()) projects = repository.findAll(paging).getContent();
-            //projects = projects.stream().sorted(Comparator.comparing( x -> sizeOfList(x.getCommits()) + sizeOfList(x.getIssues()))).toList();
         }
         else{
             paging = PageRequest.of(page, size);

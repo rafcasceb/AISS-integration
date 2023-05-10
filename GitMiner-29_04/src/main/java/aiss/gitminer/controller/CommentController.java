@@ -2,7 +2,6 @@ package aiss.gitminer.controller;
 
 import aiss.gitminer.exceptions.CommentNotFoundException;
 import aiss.gitminer.model.Comment;
-import aiss.gitminer.model.Issue;
 import aiss.gitminer.repository.CommentRepository;
 import aiss.gitminer.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,12 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "Comment", description = "Comment controller")
 @RestController

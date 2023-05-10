@@ -1,6 +1,5 @@
 package aiss.gitminer.controller;
 
-import aiss.gitminer.exceptions.CommitNotFoundException;
 import aiss.gitminer.exceptions.IssueNotFoundException;
 import aiss.gitminer.model.Comment;
 import aiss.gitminer.model.Issue;
@@ -19,15 +18,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+
+
 @Tag(name="Issue",description = "Issue management API")
 @RestController
 @RequestMapping("/gitminer/issues")
