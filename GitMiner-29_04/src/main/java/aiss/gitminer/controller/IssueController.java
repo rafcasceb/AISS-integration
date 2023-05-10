@@ -49,7 +49,7 @@ public class IssueController {
     })
     @GetMapping
     public List<Issue> findIssues
-            (@Parameter(description = "User name of the author")@RequestParam(value = "authorId",required = false) String username,
+            (@Parameter(description = "User name of the author")@RequestParam(value = "username",required = false) String username,
              @Parameter(description = "State of the issue")@RequestParam(value = "state",required = false)String state,
              @Parameter(description = "Keyword to filter")@RequestParam(value = "keyword",required = false) String keyword,
              @Parameter(description = "Page retrieved")@RequestParam(defaultValue = "0")int page,

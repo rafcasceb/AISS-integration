@@ -71,7 +71,7 @@ public class CommentController {
         }
 
         if (author != null) {
-            pageComments = repository.findByAuthor(userRepository.findByusername(author).get(),paging);
+            pageComments = repository.findByAuthor(userRepository.findByusername(author).orElse(null),paging);
         }else{
             pageComments = repository.findAll(paging);
         }
@@ -104,7 +104,7 @@ public class CommentController {
         if(!comment.isPresent()){
             throw new CommentNotFoundException();
         }
-        return comment.get();
+        return comment.orElse(null);
     }
 
 

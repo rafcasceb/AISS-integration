@@ -48,7 +48,7 @@ public class UserController {
     @GetMapping("/users")
     public List<User> findALl(
                               @Parameter(description = "Page to retrieve.") @RequestParam(defaultValue = "0")int page,
-                              @Parameter(description = "Order by activity.") @RequestParam(value = "activeusers", required = false) boolean activeUsers,
+                              @Parameter(description = "Order by activity.") @RequestParam(value = "sortByActivity", required = false) boolean sortByActivity,
                               @RequestParam(value = "order", required = false) String order,
                               @Parameter(description = "Size of the content of the page.") @RequestParam(defaultValue = "10")int size){
 
@@ -66,7 +66,8 @@ public class UserController {
         }
         users = repository.findAll(paging).getContent();
 
-        if(activeUsers == true){
+        if(sortByActivity == true){
+            // most active first
             users = users.stream()
                     .sorted(Comparator.comparing(x -> - commentRepository.findByAuthor(x,paging).getContent().size())).toList();
         }
@@ -107,16 +108,14 @@ public class UserController {
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = User.class), mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = User.class))})
     })
-    @GetMapping("user/{name}")
-    public User findOneByName(@Parameter(description = "Name of user to be retrieved.") @PathVariable String name)
+    @GetMapping("user/{username}")
+    public User findOneByName(@Parameter(description = "Name of user to be retrieved.") @PathVariable String username)
             throws UserNotFoundException {
 
-        Optional<User> user = repository.findByusername(name);
-
+        Optional<User> user = repository.findByusername(username);
         if(!user.isPresent()){
             throw new UserNotFoundException();
         }
-
         return user.get();
     }
 

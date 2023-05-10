@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Tag(name="Project", description="Project management API")
 @RestController
@@ -60,6 +60,11 @@ public class ProjectController {
             else
                 paging = PageRequest.of(page, size, Sort.by(order).ascending());
         }
+        else if(complexLast != null && complexLast==true) {
+            paging = PageRequest.of(page, size, Sort.by(Sort.Order.asc("commits"), Sort.Order.asc("issues")));
+            //if (projects.isEmpty()) projects = repository.findAll(paging).getContent();
+            //projects = projects.stream().sorted(Comparator.comparing( x -> sizeOfList(x.getCommits()) + sizeOfList(x.getIssues()))).toList();
+        }
         else{
             paging = PageRequest.of(page, size);
         }
@@ -67,25 +72,13 @@ public class ProjectController {
         if(title != null){
             projects = repository.findByname(title,paging).getContent();
         }
-        else if(complexLast != null){
-            if(complexLast){
-                if (projects.isEmpty()) projects = repository.findAll(paging).getContent();
-                projects = projects.stream().sorted(Comparator.comparing( x -> sizeOfList(x.getCommits())
-                                + sizeOfList(x.getIssues()))).toList();
-            }
-            else{
-                pageProjects = repository.findAll(paging);
-                projects = pageProjects.getContent();
-            }
-        }
         else{
-            pageProjects = repository.findAll(paging);
-            projects = pageProjects.getContent();
+            projects = repository.findAll(paging).getContent();
         }
-        return projects;
+        return projects.stream().distinct().collect(Collectors.toList());
     }
 
-    public int sizeOfList(List<?> ls){
+    private int sizeOfList(List<?> ls){
         if (ls == null){
             return 0;
         }
@@ -128,7 +121,6 @@ public class ProjectController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Project project (@Valid @Parameter(description = "Project to be created") @RequestBody Project project){
-        // System.out.println(project);
         Project _project = repository
                 .save(new Project(project.getId(),
                         project.getName(),
