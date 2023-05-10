@@ -1,0 +1,1013 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Project
+  description: Project management API
+- name: User
+  description: User management
+- name: Comment
+  description: Comment controller
+- name: Commit
+  description: Commit management APi
+- name: Issue
+  description: Issue management API
+paths:
+  /gitminer/users/{id}:
+    get:
+      tags:
+      - User
+      - find
+      - get
+      - one
+      - user
+      - users
+      summary: Retrieve a user by ID.
+      description: Retrieve a user based on the ID.
+      operationId: findOne
+      parameters:
+      - name: id
+        in: path
+        description: ID of user to be retrieved.
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      tags:
+      - User
+      - update
+      - user
+      - users
+      - put
+      summary: Updates a user.
+      description: Updates a user.
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        description: Id of user to be updated.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+      - User
+      - destroy
+      - user
+      - delete
+      - users
+      summary: Deletes a user.
+      description: Deletes a user.
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        description: Id of user to deleted.
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /gitminer/projects/{id}:
+    get:
+      tags:
+      - Project
+      - projects
+      - get
+      summary: Retrieve one project
+      description: Get one project of the database
+      operationId: findOne_1
+      parameters:
+      - name: id
+        in: path
+        description: Id of the project to find
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: Not found
+        "200":
+          description: Project found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+    put:
+      tags:
+      - Project
+      - projects
+      - put
+      summary: Update a project
+      description: Update a project with all the data
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        description: Id of the project to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: Project updated
+        "404":
+          description: Not found
+    delete:
+      tags:
+      - Project
+      - project
+      - delete
+      summary: Delete a project
+      description: Delete a project with all the data
+      operationId: delete_1
+      parameters:
+      - name: id
+        in: path
+        description: Id of the project to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: Project deleted
+        "404":
+          description: Not found
+  /gitminer/issues/{id}:
+    get:
+      tags:
+      - Issue
+      - issue
+      - get
+      summary: Retrieve an issue
+      description: Get an issue
+      operationId: findOne_2
+      parameters:
+      - name: id
+        in: path
+        description: Id of the issue
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+        "404":
+          description: Not Found
+    put:
+      tags:
+      - Issue
+      - issue
+      - update
+      summary: Update an issue
+      description: Update an existing issue with data passed on the body of the request
+      operationId: update_2
+      parameters:
+      - name: id
+        in: path
+        description: Id of the issue to update
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Issue'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+        "404":
+          description: Not Found
+    delete:
+      tags:
+      - Issue
+      - issue
+      - delete
+      summary: Delete an issue
+      description: Delete an existing issue by the id specified
+      operationId: delete_2
+      parameters:
+      - name: id
+        in: path
+        description: Issue id to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+        "404":
+          description: Not Found
+  /gitminer/commits/{id}:
+    get:
+      tags:
+      - Commit
+      - get
+      - commits
+      - id
+      summary: Retrieve a commit by id
+      description: Get a commit by its identifier
+      operationId: findOne_3
+      parameters:
+      - name: id
+        in: path
+        description: Id of the commit to find
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Commit'
+        "404":
+          description: Not Found
+    put:
+      tags:
+      - Commit
+      - commits
+      - id
+      - put
+      summary: Update a commit
+      description: Put operation to update the commit with the given id
+      operationId: update_3
+      parameters:
+      - name: id
+        in: path
+        description: Id of the commit to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Commit'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+    delete:
+      tags:
+      - Commit
+      - commits
+      - id
+      - delete
+      summary: Update a commit
+      description: Put operation to update the commit with the given id
+      operationId: delete_3
+      parameters:
+      - name: id
+        in: path
+        description: Id of the commit to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+  /gitminer/comments/{id}:
+    get:
+      tags:
+      - Comment
+      - comments
+      - get
+      summary: Retrieve one Comments
+      description: Get one comments with the id
+      operationId: findOne_4
+      parameters:
+      - name: id
+        in: path
+        description: Id of the comment to find
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        "404":
+          description: Not Found
+    put:
+      tags:
+      - Comment
+      - comments
+      - put
+      summary: Update a comment
+      description: Update a comment with all the data
+      operationId: update_4
+      parameters:
+      - name: id
+        in: path
+        description: Id of comment to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        "404":
+          description: Not Found
+    delete:
+      tags:
+      - Comment
+      - comments
+      - delete
+      summary: Delete a comment
+      description: Delete a comment with the id
+      operationId: delete_4
+      parameters:
+      - name: id
+        in: path
+        description: Id of the comment to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Bad Request
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        "404":
+          description: Not Found
+  /gitminer/users:
+    get:
+      tags:
+      - all
+      - User
+      - find
+      - get
+      - user
+      - users
+      summary: Retrieve a list of all users.
+      description: Retrieve a list of all users.
+      operationId: findALl
+      parameters:
+      - name: page
+        in: query
+        description: Page to retrieve.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: activeusers
+        in: query
+        description: Order by activity.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Size of the content of the page.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+    post:
+      tags:
+      - User
+      - post
+      - create
+      - user
+      - users
+      summary: Create a user.
+      description: Create a user.
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /gitminer/projects:
+    get:
+      tags:
+      - Project
+      - projects
+      - get
+      summary: Retrieve all Projects
+      description: Get all projects in the database
+      operationId: findAll
+      parameters:
+      - name: title
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: complexLast
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: page
+        in: query
+        description: page number
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: number of elements per page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: Projects found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        "404":
+          description: Not found
+    post:
+      tags:
+      - Project
+      - post
+      - project
+      summary: Create a project
+      description: Create a project with all the data
+      operationId: project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "201":
+          description: Project created and returned
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Project'
+  /gitminer/issues:
+    get:
+      tags:
+      - Issue
+      - get
+      - issues
+      summary: Retrieve a list of issues
+      description: Get a list of issues
+      operationId: findIssues
+      parameters:
+      - name: authorId
+        in: query
+        description: User name of the author
+        required: false
+        schema:
+          type: string
+      - name: state
+        in: query
+        description: State of the issue
+        required: false
+        schema:
+          type: string
+      - name: keyword
+        in: query
+        description: Keyword to filter
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page retrieved
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: Number of elements retrieved
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+        "404":
+          description: Not Found
+    post:
+      tags:
+      - Issue
+      - issue
+      - create
+      summary: Create an issue
+      description: Create an issue whose data is passed in the body of the request
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Issue'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+  /gitminer/commits:
+    get:
+      tags:
+      - Commit
+      - get
+      - commits
+      summary: Retrieve all commits
+      description: Get al commits
+      operationId: findCommits
+      parameters:
+      - name: email
+        in: query
+        description: email of the author of the comments to find
+        required: false
+        schema:
+          type: string
+      - name: committername
+        in: query
+        description: committer of the comments to find
+        required: false
+        schema:
+          type: string
+      - name: beforedate
+        in: query
+        description: limit date of the comments to be find
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: page number
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: number of elements per page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Commit'
+        "404":
+          description: Not Found
+    post:
+      tags:
+      - Commit
+      - post
+      - commits
+      summary: Upload a commit
+      description: Post operation to save a commit in the database
+      operationId: create_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Commit'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Commit'
+  /gitminer/comments:
+    get:
+      tags:
+      - Comment
+      - comments
+      - get
+      summary: Retrieve all Comments
+      description: Get all comments in the database
+      operationId: findAll_1
+      parameters:
+      - name: word
+        in: query
+        description: words of the comment
+        required: false
+        schema:
+          type: string
+      - name: author
+        in: query
+        description: author of the comment
+        required: false
+        schema:
+          type: string
+      - name: order
+        in: query
+        description: boolean that marks if the most recent comments appear before
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: page of the comment
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        description: number of comments to retrieve
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        "404":
+          description: Not Found
+    post:
+      tags:
+      - Comment
+      - comments
+      - post
+      summary: Create a comment
+      description: Create a comment with all the data
+      operationId: create_3
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+  /gitminer/user/{name}:
+    get:
+      tags:
+      - User
+      - find
+      - get
+      - one
+      - name
+      - user
+      - users
+      summary: Retrieve a user by name.
+      description: Retrieve a user based on the name.
+      operationId: findOneByName
+      parameters:
+      - name: name
+        in: path
+        description: Name of user to be retrieved.
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /gitminer/issues/{id}/comments:
+    get:
+      tags:
+      - comments
+      - Issue
+      - issue
+      - get
+      summary: Retrieve comments of an issue
+      description: Get comments of an issue
+      operationId: findCommentsOfOne
+      parameters:
+      - name: id
+        in: path
+        description: Id of the issue
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+        "404":
+          description: Not Found
+components:
+  schemas:
+    User:
+      required:
+      - username
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        name:
+          type: string
+        avatar_url:
+          type: string
+        web_url:
+          type: string
+    Comment:
+      required:
+      - body
+      - created_at
+      type: object
+      properties:
+        id:
+          type: string
+        body:
+          type: string
+        author:
+          $ref: '#/components/schemas/User'
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    Commit:
+      required:
+      - author_name
+      - authored_date
+      - committed_date
+      - committer_name
+      - web_url
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        author_name:
+          type: string
+        author_email:
+          type: string
+        authored_date:
+          type: string
+        committer_name:
+          type: string
+        committer_email:
+          type: string
+        committed_date:
+          type: string
+        web_url:
+          type: string
+    Issue:
+      type: object
+      properties:
+        id:
+          type: string
+        ref_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        state:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        closed_at:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        author:
+          $ref: '#/components/schemas/User'
+        assignee:
+          $ref: '#/components/schemas/User'
+        upvotes:
+          type: integer
+          format: int32
+        downvotes:
+          type: integer
+          format: int32
+        web_url:
+          type: string
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    Project:
+      required:
+      - name
+      - web_url
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        web_url:
+          type: string
+        commits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Commit'
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Issue'
