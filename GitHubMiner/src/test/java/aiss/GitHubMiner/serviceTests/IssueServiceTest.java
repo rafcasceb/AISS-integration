@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest
 public class IssueServiceTest {
@@ -27,6 +28,7 @@ public class IssueServiceTest {
         List<Issue> issues = service
                 .getIssues("spring-projects", "spring-framework", token);
         for(Issue i : issues){
+            assertNotEquals(i.getId(), null, "Some issue doesn't exist");
             System.out.println(i.getCreatedAt());
         }
     }

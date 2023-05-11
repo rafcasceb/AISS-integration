@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest
 public class CommitServiceTest {
@@ -19,6 +20,15 @@ public class CommitServiceTest {
     CommitService service;
 
     String token = "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";
+
+    @Test
+    @DisplayName( "Get commits test")
+    void getCommits() {
+        List<Commit> commits = service.getCommits("spring-projects", "spring-framework", token);
+        for(Commit c : commits){
+            assertNotEquals(c.getAuthor(), null, "Some commit doesn't exist.");
+        }
+    }
 
     @Test
     @DisplayName( "Get commits with pagination test")

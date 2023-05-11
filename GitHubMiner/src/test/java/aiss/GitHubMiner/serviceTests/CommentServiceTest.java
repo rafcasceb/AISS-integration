@@ -24,7 +24,7 @@ class CommentServiceTest {
     void getAllComments() {
         List<Comment> comments = service.getAllComments("spring-projects", "spring-framework", token);
         for(Comment c : comments){
-            //assertNotEquals(c.getBody().length(), 0, "There are empty comments.");
+            assertNotEquals(c.getId(), null, "Some comment doesn't exist.");
             System.out.println(c.getId());
         }
     }
