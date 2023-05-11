@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class CommitServiceTest {
@@ -23,8 +22,10 @@ public class CommitServiceTest {
     @Test
     @DisplayName( "Get commits test")
     void getCommits() {
-        List<Commit> commits = service
-                .getCommits("4207231");
+        List<Commit> commits = service.getCommits("4207231");
+        for (Commit c: commits){
+            assertNotEquals(c.getId(), null, "Some commit doesn't exist");
+        }
         System.out.println(commits);
     }
 

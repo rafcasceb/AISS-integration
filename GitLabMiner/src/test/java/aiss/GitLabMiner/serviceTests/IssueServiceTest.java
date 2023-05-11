@@ -1,8 +1,6 @@
 package aiss.GitLabMiner.serviceTests;
 
-import aiss.GitLabMiner.Models.Commits.Commit;
 import aiss.GitLabMiner.Models.Issues.Issue;
-import aiss.GitLabMiner.Service.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class IssueServiceTest {
@@ -24,9 +21,9 @@ public class IssueServiceTest {
     @Test
     @DisplayName( "Get issues test")
     void getIssues() {
-        List<Issue> issues = service
-                .getIssues("17960074");
+        List<Issue> issues = service.getIssues("17960074");
         for(Issue i : issues){
+            assertNotEquals(i.getId(), null, "Some issue doesn't exist");
             System.out.println(i.getDescription());
         }
     }
